@@ -11,6 +11,7 @@ class OPIC:
         self.visit_time = {}
         self.window = time_window
         self.time = 0
+        #self.highest_rank = {}
 
     def visit(self, node):
         self.time = self.time + 1
@@ -39,3 +40,7 @@ class OPIC:
         for v in self.G[node]:
             self.cash_current[v] = self.cash_current.get(v, 1.0) + (self.cash_current.get(node, 1.0) / size)
 
+            #highest = self.highest_rank.get(v, [0])
+            #if self.cash_current[v] > highest[-1]:
+            #    highest.append(self.time)
+            #    self.highest_rank[v] = highest
