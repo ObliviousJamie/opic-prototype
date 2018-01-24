@@ -1,18 +1,119 @@
 import matplotlib.pyplot as plt
-import matplotlib.colors as color
 import networkx as nx
 import random
-import matplotlib.cm as cmx
 
 from module.OPIC import OPIC
 from module.PPR import PPR
+import os
+
+dir = os.path.dirname(__file__)
+filename = os.path.join(dir, '../data/edgelist/eu-core')
+fh = open(filename, 'rb')
+G = nx.read_edgelist(fh)
+fh.close()
+options = {
+    'node_color': 'red',
+    'node_size': 10,
+    'line_color': 'grey',
+    'linewidths': 0,
+    'width': 0.05,
+}
+
+#G = nx.karate_club_graph()
+
+opic = OPIC(G, 10)
+rank = nx.pagerank(G)
+hist = sorted(rank.items(), key=lambda x: x[1], reverse=True)
+for entry in hist:
+    print(entry)
+
+opic.visit('390')
+#opic.visit(19)
+
+y =  []
+x = []
+current_max = 0
+i = 0
+for _ in range(3000):
+    max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
+    y.append(opic.cash_current[max_val])
+    x.append(opic.time)
+    max_cash = opic.cash_current[max_val]
+    if((opic.cash_current[max_val] > current_max - (max_cash * .08)) and opic.time > 1250):
+        plt.text(opic.time, opic.cash_current[max_val], max_val)
+        i+= 1
+    if(opic.cash_current[max_val] > current_max):
+        current_max = opic.cash_current[max_val]
+
+    opic.visit(max_val)
+
+print(i)
+
+plt.plot(x, y, linewidth=2.0)
+print(y)
+plt.show()
+exit()
+
+print("history")
+c = 0
+hist = sorted(opic.cash_history.items(), key=lambda x: x[1], reverse=True)
+seeds = {}
+visited = []
+for entry in hist:
+    if entry[0] not in seeds:
+        seeds[c] = [entry[0]]
+        print("Index: %s  Value: %f" % (entry[0], entry[1]))
+        visited.append(entry[0])
+        for u in G[entry[0]]:
+            if u not in visited:
+                visited.append(u)
+        c += 1
+        if c >= 42:
+            break
+
+print("Seeds" + str(len(seeds)))
+print(seeds)
+
+ppr = PPR(G)
+expand_seed = G['390']
+expand_seed = seeds[0]
+print(len(expand_seed))
+best = ppr.PPRRank(G, 0.99, 0.0001, ['950','49','62'])
+
+# Ground truth
+
+filename = os.path.join(dir, '../data/ground-truth/eu-core-snipped')
+fh = open(filename, 'rb')
+T = nx.read_edgelist(fh)
+fh.close()
+
+community = '36'
+
+tp = 0
+fn = 0
+for v in T[community]:
+    if v in best:
+        tp += 1
+        print(v)
+    else:
+        fn += 1
+        print(v)
+
+fp = 0
+for v in best:
+    if v not in T[community]:
+        fp += 1
+
+print("True positive (Correctly returned) : %s" % (tp))
+print("False negative (Not returned but should have been) : %s" % (fn))
+print("False positive (Returned but shouldn't have been) : %s" % (fp))
+print("Real community size %s" % (len(T[community])))
+print("Identifed community size %s" % (len(best)))
+
+nx.draw(G, **options)
+plt.show()
 
 G = nx.karate_club_graph()
-
-# Virtual page
-G.add_node(100)
-for v in G:
-    G.add_edge(100, v)
 
 vertices_num = len(G)
 
@@ -27,45 +128,16 @@ for _ in range(34 * 300):
     max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
     opic.visit(max_val)
 
-# print("cash")
-# for key, value in sorted(opic.cash_current.items()):
-#    print('%d   Rank: %f' % (key + 1, value))
-
 print("history")
 for key, value in sorted(opic.cash_history.items()):
     print('%d   Rank: %f' % (key + 1, value))
 
-G.remove_node(100)
-
-# pr = nx.pagerank(G,0.85)
-# print("PageRank")
-# for key, value in sorted(pr.items()):
-#    print('%d   Rank: %f' % (key + 1, value))
-
-vector = {}
-for _ in range(2):
-    opic.cash_history[100] = 0
-    max_val = max(opic.cash_history, key=lambda i: opic.cash_history[i])
-    vector[max_val] = 2
-
-    for v in G[max_val]:
-        vector[v] = 2
-        opic.cash_history[max_val] = 0
-
-    opic.cash_history[max_val] = 0
-
-for key, value in vector.items():
-    print('Key: %d   value: %d' % (key, value))
-
-pr = nx.pagerank(G, 0.5, vector)
-print("PPR")
-for key, value in sorted(pr.items()):
-    print('%d   Rank: %f' % (key + 1, value))
+hist = sorted(opic.cash_history.items(), key=lambda x: x[1], reverse=True)
+for entry in hist:
+    print('Index: %d   Rank: %f' % (entry[0], entry[1]))
 
 nx.draw(G, with_labels=True)
 plt.show()
-
-import collections
 
 # setup the graph
 G = {
@@ -97,94 +169,15 @@ G = {
     26: ([23, 24, 25, ]),
     27: ([23, 24, 25, ]),
 }
-Gvol = 102
 
 G = nx.Graph(G)
 
-# G is graph as dictionary-of-sets
-alpha = 0.99
-tol = 0.01
-seed = [16]
-
-x = {}  # Store x, r as dictionaries
-r = {}  # initialize residual
-Q = collections.deque()  # initialize queue
-for s in seed:
-    r[s] = 1.0 / len(seed)
-    Q.append(s)
-while len(Q) > 0:
-    v = Q.popleft()  # v has r[v] > tol*deg(v)
-
-    if v not in x:
-        x[v] = 0.
-
-    x[v] += (1 - alpha) * r[v]
-
-    mass = alpha * r[v] / (2 * len(G[v]))
-
-    for u in G[v]:  # for neighbors of u
-        if u not in r:
-            r[u] = 0.
-
-        if r[u] < len(G[u]) * tol <= r[u] + mass:
-            Q.append(u)  # add u to queue if large
-
-        r[u] += mass
-
-    r[v] = mass * len(G[v])
-    if r[v] >= len(G[v]) * tol:
-        Q.append(v)
-
-for key, value in x.items():
-    print('Key: %s   Value: %s' % (key, value))
-
-# Find cluster, first normalize by degree
-for v in x:
-    x[v] = x[v] / len(G[v])
-
-# now sort x's keys by value, decreasing
-sv = sorted(x.items(), key=lambda x: x[1], reverse=True)
-
-# for entry in sv:
-#    for key,value in entry:
-#        print('Key: %s Value: %s' % (key,value))
-
-# sv = PPR(G).rank(0.99,0.01,[1])
-
-S = set()
-volS = 0.
-cutS = 0.
-bestcond = 1.
-bestset = sv[0]
-
-for p in sv:
-    s = p[0]  # get the vertex
-    volS += len(G[s])  # add degree to volume
-    for v in G[s]:
-
-        if v in S:
-            cutS -= 1
-
-        else:
-            cutS += 1
-
-    print("v: %4i  cut: %4f  vol: %4f" % (s, cutS, volS))
-    S.add(s)
-    print(S)
-
-    if cutS / min(volS, Gvol - volS) < bestcond:
-        bestcond = cutS / min(volS, Gvol - volS)
-        bestset = set(S)  # make a copy
-
-print("Best set conductance: %f" % (bestcond))
-print("  set = ", str(bestset))
+print("2")
+ppr = PPR(G)
+ppr.PPRRank(G, 0.99, 0.01, [16])
 
 nx.draw(G, with_labels=True)
 plt.show()
-
-#G.add_node(100)
-#for v in G:
-#    G.add_edge(100, v)
 
 start_vertex = random.choice(list(G.nodes))
 print('%s' % start_vertex)
@@ -197,29 +190,11 @@ for _ in range(34 * 300):
     max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
     opic.visit(max_val)
 
-# print("cash")
-# for key, value in sorted(opic.cash_current.items()):
-#    print('%d   Rank: %f' % (key + 1, value))
-color_map = []
-alpha_map = []
-order = sorted(opic.cash_history.keys())
-for v in order:
-    cash = opic.cash_history[v] * 1000
-    color_map.append(cash)
-
-
-
 print("history")
 hist = sorted(opic.cash_history.items(), key=lambda x: x[1], reverse=True)
-high = sorted(opic.visit_time.items(), key=lambda x: x[1], reverse=True)
 print(hist)
 for entry in hist:
     print('Index: %d   Rank: %f' % (entry[0], entry[1]))
-for entry in high:
-    # print('Index: %d   Highest: %s' % (entry[0] , entry[1][-1]))
-    print('Index: %d   Time: %s' % (entry[0], entry[1]))
-
-#G.remove_node(100)
 
 nx.draw(G, with_labels=True)
 plt.show()
