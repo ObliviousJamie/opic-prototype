@@ -5,7 +5,6 @@ class Stats:
         self.size = 0
         for community in true_communities.values():
             self.size += len(community)
-        print(self.size)
 
 
     def compare(self, found_communities):

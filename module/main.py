@@ -44,7 +44,6 @@ for _ in range(3000):
 
 # Print local maximums
 plt.plot(x, y, linewidth=2.0)
-print(y)
 plt.show()
 
 pos = nx.spring_layout(G)
@@ -69,9 +68,10 @@ for seed in seeds:
 
 real_communities = imports.ground_truth('../data/ground-truth/eu-core')
 stats = Stats(real_communities)
-print(real_communities)
-print(community)
 stats.compare(community)
+
+print("Communites detected %s" % len(community))
+print("Real Communites %s" % len(real_communities))
 
 exit()
 
