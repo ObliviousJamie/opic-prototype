@@ -81,7 +81,7 @@ class PPR:
 
         #for key, value in x.items():
         #    print('Key: %s   Value: %s' % (key, value))
-        print(len(x.items()))
+        #print(len(x.items()))
 
         # Find cluster, first normalize by degree
         for v in x:
@@ -107,14 +107,14 @@ class PPR:
                 else:
                     cutS += 1
 
-            print("v: %s  cut: %4f  vol: %4f" % (s, cutS, volS))
+            #print("v: %s  cut: %4f  vol: %4f" % (s, cutS, volS))
             S.add(s)
-            print(S)
+            #print(S)
 
             if cutS / min(volS, Gvol - volS) < bestcond:
                 bestcond = cutS / min(volS, Gvol - volS)
                 bestset = set(S)  # make a copy
 
-        print("Best set conductance: %f" % (bestcond))
-        print("  set = ", str(bestset))
+        #print("Best set conductance: %f" % (bestcond))
+        #print("  set = ", str(bestset))
         return bestset

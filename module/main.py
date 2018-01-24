@@ -12,7 +12,6 @@ fh = open(filename, 'rb')
 G = nx.read_edgelist(fh)
 fh.close()
 options = {
-    'node_color': 'red',
     'node_size': 10,
     'line_color': 'grey',
     'linewidths': 0,
@@ -24,8 +23,8 @@ options = {
 opic = OPIC(G, 10)
 rank = nx.pagerank(G)
 hist = sorted(rank.items(), key=lambda x: x[1], reverse=True)
-for entry in hist:
-    print(entry)
+#for entry in hist:
+#    print(entry)
 
 opic.visit('390')
 #opic.visit(19)
@@ -34,6 +33,7 @@ y =  []
 x = []
 current_max = 0
 i = 0
+seeds = []
 for _ in range(3000):
     max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
     y.append(opic.cash_current[max_val])
@@ -41,6 +41,10 @@ for _ in range(3000):
     max_cash = opic.cash_current[max_val]
     if((opic.cash_current[max_val] > current_max - (max_cash * .08)) and opic.time > 1250):
         plt.text(opic.time, opic.cash_current[max_val], max_val)
+
+        if(max_val not in seeds):
+            seeds.append(max_val)
+
         i+= 1
     if(opic.cash_current[max_val] > current_max):
         current_max = opic.cash_current[max_val]
@@ -49,36 +53,50 @@ for _ in range(3000):
 
 print(i)
 
-plt.plot(x, y, linewidth=2.0)
-print(y)
-plt.show()
-exit()
+#plt.plot(x, y, linewidth=2.0)
+#print(y)
+#plt.show()
+#exit()
 
-print("history")
-c = 0
-hist = sorted(opic.cash_history.items(), key=lambda x: x[1], reverse=True)
-seeds = {}
-visited = []
-for entry in hist:
-    if entry[0] not in seeds:
-        seeds[c] = [entry[0]]
-        print("Index: %s  Value: %f" % (entry[0], entry[1]))
-        visited.append(entry[0])
-        for u in G[entry[0]]:
-            if u not in visited:
-                visited.append(u)
-        c += 1
-        if c >= 42:
-            break
-
-print("Seeds" + str(len(seeds)))
-print(seeds)
+#print("history")
+#c = 0
+#hist = sorted(opic.cash_history.items(), key=lambda x: x[1], reverse=True)
+#seeds = {}
+#visited = []
+#for entry in hist:
+#    if entry[0] not in seeds:
+#        seeds[c] = [entry[0]]
+#        print("Index: %s  Value: %f" % (entry[0], entry[1]))
+#        visited.append(entry[0])
+#        for u in G[entry[0]]:
+#            if u not in visited:
+#                visited.append(u)
+#        c += 1
+#        if c >= 42:
+#            break
+#
+#print("Seeds" + str(len(seeds)))
+#print(seeds)
+pos = nx.spring_layout(G)
 
 ppr = PPR(G)
-expand_seed = G['390']
-expand_seed = seeds[0]
-print(len(expand_seed))
-best = ppr.PPRRank(G, 0.99, 0.0001, ['950','49','62'])
+
+community = {}
+index = 0
+print(len(seeds))
+for seed in seeds:
+    best = ppr.PPRRank(G, 0.99, 0.0001, [seed])
+    community[seed] = best
+    color = 'C' + str(index % 8)
+    nx.draw_networkx_nodes(G, pos, best, node_color= color, node_size= 10 )
+    index+=1
+
+print(community)
+nx.draw_networkx_labels(G, pos, font_size=8, font_family='sans-serif')
+nx.draw_networkx_edges(G, pos, width=0.05, color='grey')
+plt.show()
+
+exit()
 
 # Ground truth
 
@@ -110,7 +128,7 @@ print("False positive (Returned but shouldn't have been) : %s" % (fp))
 print("Real community size %s" % (len(T[community])))
 print("Identifed community size %s" % (len(best)))
 
-nx.draw(G, **options)
+#nx.draw(G,**options)
 plt.show()
 
 G = nx.karate_club_graph()
