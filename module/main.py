@@ -6,14 +6,7 @@ from module.seeder import Seeder
 from module.stats import Stats
 
 
-def calculate_seeds(seeds, G, should_draw=True):
-    options = {
-        'node_size': 10,
-        'line_color': 'grey',
-        'linewidths': 0,
-        'width': 0.05,
-    }
-
+def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False):
     pos = nx.spring_layout(G)
 
     ppr = PPR(G)
@@ -21,14 +14,20 @@ def calculate_seeds(seeds, G, should_draw=True):
     community = {}
     index = 0
     for seed in seeds:
-        best = ppr.PPRRank(G, 0.99, 0.01, [seed])
+        best = ppr.PPRRank(G, 0.99, tol, [seed])
         community[seed] = best
-        if should_draw:
+
+        if should_draw and is_large:
+            nx.draw_networkx_nodes(G, pos, best, node_size=10)
+        elif should_draw:
             color = 'C' + str(index % 8)
             nx.draw_networkx_nodes(G, pos, best, node_color=color, node_size=150)
             index += 1
 
-    if should_draw:
+    if should_draw and is_large:
+        nx.draw_networkx_edges(G, pos, width=0.05, color='grey')
+        plt.show()
+    elif should_draw:
         nx.draw_networkx_labels(G, pos, font_size=8, font_family='sans-serif')
         nx.draw_networkx_edges(G, pos, width=0.5, color='grey')
         plt.show()
@@ -49,7 +48,7 @@ def karate():
     K = nx.karate_club_graph()
     seeder = Seeder()
     seeds = seeder.seed(K, 31, 1.6, True, return_type="integer")
-    discovered_communities = calculate_seeds(seeds, K)
+    discovered_communities = calculate_seeds(seeds, K, tol=0.01)
 
     for key, value in discovered_communities.items():
         print("Seed: %s found:  %s" % (key, value))
@@ -63,7 +62,7 @@ def imported(import_path, start, ground_truth='', threshold=1.0):
     seeds = seeder.seed(I, start, threshold, True, return_type="string")
 
     print("Found: %s " % seeds)
-    discovered_communities = calculate_seeds(seeds, I)
+    discovered_communities = calculate_seeds(seeds, I, is_large=True)
     print("Found: %s " % discovered_communities)
 
     if ground_truth != '':
