@@ -9,6 +9,8 @@ name = "pypi"
 
 networkx = "*"
 matplotlib = "*"
+peakutils = "*"
+numpy = "*"
 
 
 [dev-packages]
