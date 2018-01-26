@@ -1,119 +1,87 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
-import peakutils
-from module.OPIC import OPIC
 from module.PPR import PPR
 from module.importData import ImportData
+from module.seeder import Seeder
 from module.stats import Stats
-from random import *
-
-imports = ImportData()
-
-G = imports.text_graph('../data/edgelist/eu-core')
-
-options = {
-    'node_size': 10,
-    'line_color': 'grey',
-    'linewidths': 0,
-    'width': 0.05,
-}
-
-G = nx.karate_club_graph()
-opic = OPIC(G, 10)
-opic.visit(7)
-#opic.visit('390')
-#G.add_node('1005')
-#for v in G:
-#    G.add_edge('1005',v)
-
-y = []
-x = []
-seeds = []
-maximum = np.empty([1, 3000])
-np_time = np.empty([1, 3000])
-for _ in range(64):
-    max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
-    y.append(opic.cash_current[max_val])
-    x.append(opic.time)
-    max_cash = opic.cash_current[max_val]
-    if (opic.time > 0):
-        # plt.text(opic.time, opic.cash_current[max_val], max_val)
-        maximum.put(opic.time - 1, max_cash)
-        np_time.put(opic.time - 1, max_val)
-    opic.visit(max_val)
-
-y1 = maximum[0]
-x1 = np_time[0]
-##print(maximum[0])
-indexes = peakutils.indexes(maximum[0], thres= 1.6 / max(maximum[0]))
-#print(indexes)
-#print(np_time[0][indexes], maximum[0][indexes])
-#plt.plot(x1, y1, lw=0.4, alpha=1.0)
-plt.plot(indexes, maximum[0][indexes])
-print("Number of peaks: %s " % len(x1[indexes]))
-# plt.figure(figsize=(10,6))
-# pplot(x, y, indexes)
-# plt.title('First estimate')
-#
-# peaks = peakutils.interpolate(np_time[0], maximum[0], ind= indexes)
-# print(peaks)
-# interpolatedIndexes = peakutils.interpolate(range(0, len(maximum[0])), maximum[0], ind=indexes)
-# Print local maximums
-plt.plot(x, y, linewidth=0.5)
-plt.show()
-
-pos = nx.spring_layout(G)
-
-ppr = PPR(G)
-
-for seed in np_time[0][indexes]:
-    #seed = str(int(seed))
-    if seed not in seeds:
-        for v in G[seed]:
-            if v in seeds:
-                break
-        seeds.append(seed)
-
-print("Number of seeds: %s " % len(seeds))
-print(seeds)
-
-#seeds = []
-#
-#for i in range(389):
-#    seed = str(randint(0, 1004))
-#    if seed not in seeds:
-#        for v in G[seed]:
-#            if v in seeds:
-#                break
-#        seeds.append(seed)
 
 
-community = {}
-index = 0
-for seed in seeds:
-    best = ppr.PPRRank(G, 0.99, 0.01, [seed])
-    community[seed] = best
-    color = 'C' + str(index % 8)
-    nx.draw_networkx_nodes(G, pos, best, node_color=color, node_size=150)
-    index += 1
+def calculate_seeds(seeds, G, should_draw=True):
+    options = {
+        'node_size': 10,
+        'line_color': 'grey',
+        'linewidths': 0,
+        'width': 0.05,
+    }
 
-nx.draw_networkx_labels(G, pos, font_size=8, font_family='sans-serif')
-nx.draw_networkx_edges(G, pos, width=0.5, color='grey')
-plt.show()
+    pos = nx.spring_layout(G)
 
+    ppr = PPR(G)
+
+    community = {}
+    index = 0
+    for seed in seeds:
+        best = ppr.PPRRank(G, 0.99, 0.01, [seed])
+        community[seed] = best
+        if should_draw:
+            color = 'C' + str(index % 8)
+            nx.draw_networkx_nodes(G, pos, best, node_color=color, node_size=150)
+            index += 1
+
+    if should_draw:
+        nx.draw_networkx_labels(G, pos, font_size=8, font_family='sans-serif')
+        nx.draw_networkx_edges(G, pos, width=0.5, color='grey')
+        plt.show()
+
+    return community
+
+
+def community_stats(ground_truth_communities, found):
+    stats = Stats(ground_truth_communities)
+    mean = stats.compare(found)
+
+    print("Mean accuracy %f" % mean)
+    print("Communities detected %s" % len(found))
+    print("Real Communities %s" % len(ground_truth_communities))
+
+
+def karate():
+    K = nx.karate_club_graph()
+    seeder = Seeder()
+    seeds = seeder.seed(K, 31, 1.6, True, return_type="integer")
+    discovered_communities = calculate_seeds(seeds, K)
+
+    for key, value in discovered_communities.items():
+        print("Seed: %s found:  %s" % (key, value))
+
+
+def imported(import_path, start, ground_truth='', threshold=1.0):
+    imports = ImportData()
+    I = imports.text_graph(import_path)
+
+    seeder = Seeder()
+    seeds = seeder.seed(I, start, threshold, True, return_type="string")
+
+    print("Found: %s " % seeds)
+    discovered_communities = calculate_seeds(seeds, I)
+    print("Found: %s " % discovered_communities)
+
+    if ground_truth != '':
+        real_communities = imports.ground_truth(ground_truth)
+        community_stats(real_communities, discovered_communities)
+
+
+def similar_communities():
+    """ Finds arrays that are similar and returns them as a hash table
+    This is used to discover similar seeds
+    """
+    pass
+
+
+karate()
 
 exit()
-# Ground truth
 
-real_communities = imports.ground_truth('../data/ground-truth/eu-core')
+# Imported Graphs
 
-
-stats = Stats(real_communities)
-mean = stats.compare(community)
-
-print("Mean accuracy %f" % mean)
-print("Communites detected %s" % len(community))
-print("Real Communites %s" % len(real_communities))
-
-exit()
+imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core')
