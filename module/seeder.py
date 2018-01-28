@@ -19,7 +19,7 @@ class Seeder:
     def format_float(self, index):
         pass
 
-    def seed(self, G, start, threshold, should_plot=False, return_type="integer"):
+    def seed(self, G, start, threshold, should_plot=False, return_type="integer", print_ranks=False):
 
         seed_switch = {
             'integer' : self.format_integer,
@@ -27,7 +27,7 @@ class Seeder:
             'string' : self.format_string
         }
 
-        opic = OPIC(G, 10)
+        opic = OPIC(G, 40)
         opic.visit(start)
         iterations = len(G.edges())
 
@@ -57,6 +57,12 @@ class Seeder:
                     if v in seeds:
                         break
                 seeds.append(seed)
+
+        if print_ranks:
+            ordered_rank = sorted(opic.cash_history, key=opic.cash_history.get, reverse=True)
+            for index in ordered_rank:
+                if(index in seeds):
+                    print("Vertex: %s, Page Rank: %.2f" %  (index, opic.cash_history[index]))
 
         if should_plot:
             plt.plot(indexes, y_axis[0][indexes])

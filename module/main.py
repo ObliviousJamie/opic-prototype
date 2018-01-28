@@ -6,7 +6,7 @@ from module.seeder import Seeder
 from module.stats import Stats
 
 
-def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False):
+def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False, use_neighborhood=True):
     pos = nx.spring_layout(G)
 
     ppr = PPR(G)
@@ -14,7 +14,8 @@ def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False):
     community = {}
     index = 0
     for seed in seeds:
-        best = ppr.PPRRank(G, 0.99, tol, [seed])
+        seed_array = G[seed] if use_neighborhood else [seed]
+        best = ppr.PPRRank(G, 0.99, tol, seed_array)
         community[seed] = best
 
         if should_draw and is_large:
@@ -47,8 +48,8 @@ def community_stats(ground_truth_communities, found):
 def karate():
     K = nx.karate_club_graph()
     seeder = Seeder()
-    seeds = seeder.seed(K, 31, 1.6, True, return_type="integer")
-    discovered_communities = calculate_seeds(seeds, K, tol=0.01)
+    seeds = seeder.seed(K, 31, 1.6, True, return_type="integer", print_ranks=True)
+    discovered_communities = calculate_seeds(seeds, K, tol=0.01, use_neighborhood=True)
 
     for key, value in discovered_communities.items():
         print("Seed: %s found:  %s" % (key, value))
@@ -59,15 +60,23 @@ def imported(import_path, start, ground_truth='', threshold=1.0):
     I = imports.text_graph(import_path)
 
     seeder = Seeder()
-    seeds = seeder.seed(I, start, threshold, True, return_type="string")
+    seeds = seeder.seed(I, start, threshold, True, return_type="string", print_ranks=False)
 
-    print("Found: %s " % seeds)
-    discovered_communities = calculate_seeds(seeds, I, is_large=True)
-    print("Found: %s " % discovered_communities)
+    discovered_communities = calculate_seeds(seeds, I, is_large=True, should_draw=False)
 
     if ground_truth != '':
         real_communities = imports.ground_truth(ground_truth)
         community_stats(real_communities, discovered_communities)
+    else:
+        size = 0
+        for key, value in discovered_communities.items():
+            print("Seed: %s found:  %s" % (key, value))
+            size += len(value)
+
+        discovered_length = len(discovered_communities.keys())
+        average_size = size / discovered_length
+        print("Communities discovered: %s" % discovered_length)
+        print("Average community size %s" % average_size)
 
 
 def similar_communities():
@@ -77,10 +86,12 @@ def similar_communities():
     pass
 
 
-karate()
+#Built in graphs
 
-exit()
+#karate()
+
 
 # Imported Graphs
 
-imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core')
+#imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=1.4)
+imported('../data/edgelist/hepph-phenomenology', '17010', threshold=1.4)
