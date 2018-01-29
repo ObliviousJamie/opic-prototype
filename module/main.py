@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 from module.PPR import PPR
+from module.crawlStats import CrawlStats
 from module.importData import ImportData
 from module.seeder import Seeder
 from module.stats import Stats
+from networkx.algorithms.community import LFR_benchmark_graph
 
 
 def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False, use_neighborhood=True):
@@ -86,12 +88,53 @@ def similar_communities():
     pass
 
 
-#Built in graphs
+def flip_list_dict(dictionary):
+    new_dict = {}
+    for key, value in dictionary.items():
+        for item in value:
+            new_dict[item] = key
+    return new_dict
 
-#karate()
+
+def prune_unconnected_components(graph):
+    current = graph
+    if not nx.is_connected(graph):
+        connected_subgraphs = nx.connected_component_subgraphs(graph)
+        current = next(connected_subgraphs)
+
+        for sub_graph in connected_subgraphs:
+            if len(sub_graph.nodes) > len(current.nodes):
+                current = sub_graph
+    return current
+
+
+# Built in graphs
+
+# karate()
 
 
 # Imported Graphs
 
-#imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=1.4)
-imported('../data/edgelist/hepph-phenomenology', '17010', threshold=1.4)
+# imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=1.4)
+imports = ImportData()
+I = imports.text_graph('../data/edgelist/eu-core')
+
+I = prune_unconnected_components(I)
+
+real_communities = imports.ground_truth('../data/ground-truth/eu-core')
+membership = flip_list_dict(real_communities)
+
+crawl = CrawlStats()
+crawl.coverage_plot(I, real_communities, membership)
+
+# imported('../data/edgelist/hepph-phenomenology', '17010', threshold=1.4)
+# benchmark_graph = LFR_benchmark_graph(1000,3,1.5,0.1, average_degree=30, min_community=50)
+
+# n = 2501
+# tau1 = 3
+# tau2 = 1.5
+# mu = 0.1
+# G = LFR_benchmark_graph(n, tau1, tau2, mu, average_degree=5,
+#                        min_community=20, seed=10)
+# communities = {frozenset(G.nodes[v]['community']) for v in G}
+# print(communities)
