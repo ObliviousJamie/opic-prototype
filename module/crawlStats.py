@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from queue import Queue
-from queue import PriorityQueue
 from random import choice
 import copy
 

@@ -47,22 +47,32 @@ def community_stats(ground_truth_communities, found):
     print("Real Communities %s" % len(ground_truth_communities))
 
 
-def karate():
+def karate(mfc=True):
     K = nx.karate_club_graph()
     seeder = Seeder()
-    seeds = seeder.seed(K, 31, 1.6, True, return_type="integer", print_ranks=True)
+    #seeds = seeder.seed(K, 31, 1.6, True, return_type="integer", print_ranks=True)
+    if mfc:
+        seeds = seeder.seed_MFC_rank(K, 31, 1.6, True, return_type="integer", print_ranks=True)
+    else:
+        seeds = seeder.seed(K, 31, 1.6, True, return_type="integer", print_ranks=True)
+
     discovered_communities = calculate_seeds(seeds, K, tol=0.01, use_neighborhood=True)
 
     for key, value in discovered_communities.items():
         print("Seed: %s found:  %s" % (key, value))
 
 
-def imported(import_path, start, ground_truth='', threshold=1.0):
+def imported(import_path, start, ground_truth='', threshold=1.0, mfc=True):
     imports = ImportData()
     I = imports.text_graph(import_path)
+    I = prune_unconnected_components(I)
 
     seeder = Seeder()
-    seeds = seeder.seed(I, start, threshold, True, return_type="string", print_ranks=False)
+    if mfc:
+        seeds = seeder.seed_MFC_rank(I, start, threshold, True, return_type="string", print_ranks=False)
+    else:
+        seeds = seeder.seed(I, start, threshold, True, return_type="string", print_ranks=False)
+
 
     discovered_communities = calculate_seeds(seeds, I, is_large=True, should_draw=False)
 
@@ -111,12 +121,16 @@ def prune_unconnected_components(graph):
 
 # Built in graphs
 
-# karate()
+#karate()
 
 
 # Imported Graphs
 
-# imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=1.4)
+imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=2.7)
+
+
+# Coverage
+
 #imports = ImportData()
 #I = imports.text_graph('../data/edgelist/eu-core')
 #
