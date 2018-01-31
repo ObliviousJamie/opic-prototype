@@ -90,9 +90,10 @@ def similar_communities():
 
 def flip_list_dict(dictionary):
     new_dict = {}
-    for key, value in dictionary.items():
-        for item in value:
-            new_dict[item] = key
+    for key, value_list in dictionary.items():
+        for item in value_list:
+            new_dict.setdefault(item,list())
+            new_dict[item].append(key)
     return new_dict
 
 
@@ -116,17 +117,37 @@ def prune_unconnected_components(graph):
 # Imported Graphs
 
 # imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=1.4)
-imports = ImportData()
-I = imports.text_graph('../data/edgelist/eu-core')
+#imports = ImportData()
+#I = imports.text_graph('../data/edgelist/eu-core')
+#
+#I = prune_unconnected_components(I)
+#
+#real_communities = imports.ground_truth('../data/ground-truth/eu-core')
+#membership = flip_list_dict(real_communities)
 
-I = prune_unconnected_components(I)
+#crawl = CrawlStats()
+#crawl.coverage_plot(I, real_communities, membership)
+#eu = '../data/edgelist/eu-core'
+#eu_truth = '../data/ground-truth/eu-core'
+#
+#dblp = '../data/edgelist/dblp'
+#dblp_truth = '../data/ground-truth/dblp'
+#dblp_truth_min = '../data/ground-truth/dblp_5000'
+#
+#imports = ImportData()
+#I = imports.text_graph(eu)
+#
+#I = prune_unconnected_components(I)
+#
+#real_communities = imports.ground_truth(eu_truth)
+#membership = flip_list_dict(real_communities)
 
-real_communities = imports.ground_truth('../data/ground-truth/eu-core')
-membership = flip_list_dict(real_communities)
-
-crawl = CrawlStats()
-crawl.coverage_plot(I, real_communities, membership)
-
+#print(len(real_communities))
+#print(len(membership))
+#
+#
+#crawl = CrawlStats()
+#crawl.coverage_plot(I, real_communities, membership)
 # imported('../data/edgelist/hepph-phenomenology', '17010', threshold=1.4)
 # benchmark_graph = LFR_benchmark_graph(1000,3,1.5,0.1, average_degree=30, min_community=50)
 

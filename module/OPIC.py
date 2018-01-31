@@ -1,3 +1,6 @@
+from random import choice
+
+
 class OPIC:
     """Online page importance calculation
 
@@ -5,6 +8,7 @@ class OPIC:
     """
 
     def __init__(self, G, time_window):
+        self.local_max_vertex = -1
         self.G = G
         self.cash_history = {}
         self.cash_current = {}
@@ -42,4 +46,11 @@ class OPIC:
 
         for v in self.G[node]:
             self.cash_current[v] = self.cash_current.get(v, self.start_cash) + (self.cash_current.get(node, self.start_cash) / size)
+
+            # Update max vertex as this has the highest current page rank
+            if self.cash_current[v] >= self.cash_current.get(self.local_max_vertex, 0) and self.local_max_vertex != node:
+                self.local_max_vertex = v
+            elif self.local_max_vertex == node:
+                #Node will be set to 0 so new local max will change
+                self.local_max_vertex = v
 

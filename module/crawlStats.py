@@ -4,6 +4,8 @@ from queue import PriorityQueue
 from random import choice
 import copy
 
+import time
+
 from module.OPIC import OPIC
 
 
@@ -18,28 +20,35 @@ class CrawlStats:
     def coverage_plot(self, graph, communities, memberships):
         number_communities = len(communities.keys())
 
+        print(number_communities)
+
+
         plt.axis([0, number_communities, 0, 100])
 
         random_start = choice(list(graph.nodes))
         print("Start: %s" % random_start)
+
+        start_time = time.time()
 
         bfs = copy.deepcopy(communities)
         opic = copy.deepcopy(communities)
         dfs = copy.deepcopy(communities)
         mfc = copy.deepcopy(communities)
         random = copy.deepcopy(communities)
-        self.random_walk(graph, random, memberships.copy(), random_start)
-        self.BFS(graph, bfs, memberships.copy(), random_start)
+        #self.random_walk(graph, random, memberships.copy(), random_start)
         self.OPIC(graph, opic, memberships.copy(), random_start)
-        self.DFS(graph, dfs, memberships.copy(), random_start)
         self.MFC(graph, mfc, memberships.copy(), random_start)
+        self.BFS(graph, bfs, memberships.copy(), random_start)
+        self.DFS(graph, dfs, memberships.copy(), random_start)
+        end_time = time.time()
+        print("Total time %s" % (end_time - start_time))
         plt.legend()
         plt.show()
 
     @staticmethod
     def OPIC(G, opic_communities, opic_members, start):
-        x = []
-        y = []
+        print("OPIC running...")
+        x,y = [], []
 
         nodes = list(G.nodes)
         number_nodes = len(nodes)
@@ -51,21 +60,26 @@ class CrawlStats:
         nodes.remove(start)
         visited += 1.0
 
-        if CrawlStats.community_removed(start, opic_communities, opic_members):
-            community_explored += 1
+        communities_incremented = CrawlStats.community_removed(start, opic_communities, opic_members)
+        community_explored += communities_incremented
 
         x.append(community_explored)
         y.append(visited / number_nodes)
 
         while nodes:
-            max_cash_node = max(opic.cash_current, key=lambda i: opic.cash_current[i])
+            #max_cash_node = max(opic.cash_current, key=lambda i: opic.cash_current[i])
+            max_cash_node = opic.local_max_vertex
             opic.visit(max_cash_node)
 
             if max_cash_node in nodes:
                 nodes.remove(max_cash_node)
+
+                communities_incremented = CrawlStats.community_removed(max_cash_node, opic_communities, opic_members)
+                if (communities_incremented + community_explored) > community_explored:
+                    print("OPIC Explored %s percent" % ((visited / number_nodes) * 100 ))
+                community_explored += communities_incremented
+
                 visited += 1
-                if CrawlStats.community_removed(max_cash_node, opic_communities, opic_members):
-                    community_explored += 1
                 x.append(community_explored)
                 y.append((visited / number_nodes) * 100)
 
@@ -83,12 +97,17 @@ class CrawlStats:
         visited.append(start)
 
         while queue.not_empty:
+            if len(visited) > len(G):
+                print("Something went wrong")
+                break
             if queue.empty():
                 break
             u = queue.get()
 
-            if CrawlStats.community_removed(u, bfs_communities, bfs_members):
-                community_explored += 1
+            communities_incremented = CrawlStats.community_removed(u, bfs_communities, bfs_members)
+            if (communities_incremented + community_explored) > community_explored:
+                print("BFS Explored %2.f percent" % ((nodes_explored / len(G.nodes)) * 100 ))
+            community_explored += communities_incremented
             nodes_explored += 1.0
 
             y.append((nodes_explored / len(G.nodes)) * 100)
@@ -102,6 +121,7 @@ class CrawlStats:
 
     @staticmethod
     def random_walk(G, random_communities, random_members, start):
+        print("Random walk running")
         x, y = [], []
         community_explored, nodes_explored = 0, 0
 
@@ -118,8 +138,8 @@ class CrawlStats:
             u = choice(queue)
             queue.remove(u)
 
-            if CrawlStats.community_removed(u, random_communities, random_members):
-                community_explored += 1
+            communities_incremented = CrawlStats.community_removed(u, random_communities, random_members)
+            community_explored += communities_incremented
             nodes_explored += 1.0
 
             y.append((nodes_explored / len(G.nodes)) * 100)
@@ -133,6 +153,7 @@ class CrawlStats:
 
     @staticmethod
     def DFS(G, dfs_communities, dfs_members, start):
+        print("DFS running")
         x, y = [], []
         stack = []
         community_explored, nodes_explored = 0, 0
@@ -145,8 +166,8 @@ class CrawlStats:
             u = stack.pop()
             nodes_explored += 1
 
-            if CrawlStats.community_removed(u, dfs_communities, dfs_members):
-                community_explored += 1
+            communities_incremented = CrawlStats.community_removed(u, dfs_communities, dfs_members)
+            community_explored += communities_incremented
 
             y.append(nodes_explored / len(G.nodes) * 100)
             x.append(community_explored)
@@ -173,8 +194,12 @@ class CrawlStats:
             max_vertex = max(reference_dictionary, key=lambda i: reference_dictionary[i])
             del reference_dictionary[max_vertex]
 
-            if CrawlStats.community_removed(max_vertex, mfc_communities, mfc_members):
-                community_explored += 1
+            communities_incremented = CrawlStats.community_removed(max_vertex, mfc_communities, mfc_members)
+
+            if (communities_incremented + community_explored) > community_explored:
+                print("MFC Explored %2.f percent" % ((nodes_explored / len(G.nodes)) * 100 ))
+
+            community_explored += communities_incremented
             nodes_explored += 1.0
 
             y.append((nodes_explored / len(G.nodes)) * 100)
@@ -195,8 +220,14 @@ class CrawlStats:
         plt.plot(x, y, linewidth=2, label="MFC")
 
     @staticmethod
-    def community_removed(index, communities, members):
-        key = members[index]
-        communities[key].remove(index)
-        if not communities[key]:
-            return True
+    def community_removed(vertex, communities, members):
+        number_empty = 0
+
+        for community in members.get(vertex, []):
+            # TODO May have already been removed
+            communities[community].remove(vertex)
+
+            if not communities[community]:
+                number_empty += 1
+
+        return number_empty
