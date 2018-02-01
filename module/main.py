@@ -118,15 +118,16 @@ def plot_multicoverage(import_path='', graph=''):
 
 
     print("Processing MFC low seed")
-    mfc_seed_low = seeder.seed_MFC_rank(graph, start, 2.98, False, return_type="string", print_ranks=False)
+    mfc_seed_low = seeder.seed_MFC_rank(graph, start, 2.9, False, return_type="string", print_ranks=False)
     #mfc_seed_high = seeder.seed_MFC_rank(graph, start, 3.45, False, return_type="string", print_ranks=False)
 
     print("Processing OPIC low seed")
-    opic_seed_low = seeder.seed(graph, start, 1.43, False, return_type="string", print_ranks=False)
+    opic_seed_low = seeder.seed(graph, start, 1.62, False, return_type="string", print_ranks=False)
     #opic_seed_high = seeder.seed(graph, start, 1.58, False, return_type="string", print_ranks=False)
 
     print("Processing MFC ref")
-    mfc_ref = seeder.seed_MFC(graph, start, 0.8, False, return_type="string", print_ranks=False)
+    mfc_ref = seeder.seed_MFC(graph, start, 2.28, False, return_type="string", min=True)
+    mfc_ref_high = seeder.seed_MFC(graph, start, 0.8, False, return_type="string", min=False)
 
     random_small = []
     random_large = []
@@ -147,9 +148,10 @@ def plot_multicoverage(import_path='', graph=''):
     #seed_dict["opic-seed-high-thres"] = opic_seed_high
     #seed_dict["random_small"] = random_small
     print("Processing random")
-    seed_dict["random_large"] = random_large
+    #seed_dict["random_large"] = random_large
 
-    seed_dict["mfc-ref"] = mfc_ref
+    seed_dict["mfc-ref-original"] = mfc_ref
+    seed_dict["mfc-ref-highest"] = mfc_ref_high
 
     print("Plotting graph...")
     plot_coverages(graph, seed_dict)

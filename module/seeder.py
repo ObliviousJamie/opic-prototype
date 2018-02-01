@@ -135,7 +135,7 @@ class Seeder:
 
         return seeds
 
-    def seed_MFC(self, G, start, threshold, should_plot=False, return_type="integer", print_ranks=False):
+    def seed_MFC(self, G, start, threshold, should_plot=False, return_type="integer", min=True):
         mfc = MFC(G, start)
 
         seed_switch = {
@@ -151,7 +151,17 @@ class Seeder:
             max_vertex = mfc.next()
             x.append(max_vertex)
 
-        y_axis = np.array(mfc.y)
+        y_axis = []
+        if min:
+            for ref in mfc.y:
+                if ref == 0:
+                    y_axis.append(0)
+                else:
+                    y_axis.append(1 / ref)
+        else:
+            y_axis = np.array(mfc.y)
+
+        #y_axis = np.array(mfc.y)
         x_axis = np.array(x)
 
         indexes = peakutils.indexes(y_axis, thres=threshold / max(y_axis))
