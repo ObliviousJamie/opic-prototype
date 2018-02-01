@@ -177,6 +177,11 @@ def prune_unconnected_components(graph):
     #print("Edges", graph.edges('651'))
     #print("Adj", graph.adj['651'])
     #print(list(graph.nodes_with_selfloops()))
+
+    #Remove self loops
+    for vertex in graph.nodes_with_selfloops():
+        graph.remove_edge(vertex,vertex)
+
     if not nx.is_connected(graph):
         connected_subgraphs = nx.connected_component_subgraphs(graph)
         current = next(connected_subgraphs)

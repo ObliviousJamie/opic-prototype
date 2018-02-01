@@ -33,13 +33,10 @@ class Seeder:
         iterations = len(G.edges())
 
         seeds = []
-        x = []
-        y = []
-        y_axis = np.empty([1, iterations])
-        x_axis = np.empty([1, iterations])
+        x,y = [], []
+        x_axis, y_axis = [], []
         for _ in range(iterations):
             max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
-            # max_val = opic.local_max_vertex
             max_cash = opic.cash_current[max_val]
 
             if should_plot:
@@ -47,12 +44,14 @@ class Seeder:
                 x.append(opic.time - 1)
 
             if opic.time > 0:
-                y_axis.put(opic.time - 1, max_cash)
-                x_axis.put(opic.time - 1, max_val)
+                x_axis.append(max_val)
+                y_axis.append(max_cash)
             opic.visit(max_val)
 
-        indexes = peakutils.indexes(y_axis[0], thres=threshold / max(y_axis[0]))
-        for seed in x_axis[0][indexes]:
+        x_axis, y_axis = np.array(x_axis), np.array(y_axis)
+
+        indexes = peakutils.indexes(y_axis, thres=threshold / max(y_axis))
+        for seed in x_axis[indexes]:
             seed = seed_switch[return_type](seed)
             if seed not in seeds:
                 for v in G[seed]:
@@ -67,8 +66,8 @@ class Seeder:
                     print("Vertex: %s, Page Rank: %.2f" % (index, opic.cash_history[index]))
 
         if should_plot:
-            plt.plot(indexes, y_axis[0][indexes])
-            print("Number of peaks: %s " % len(y_axis[0][indexes]))
+            plt.plot(indexes, y_axis[indexes])
+            print("Number of peaks: %s " % len(y_axis[indexes]))
             print("Number of seeds: %s " % len(seeds))
             # Print local maximums
             plt.plot(x, y, linewidth=0.5)
@@ -91,7 +90,7 @@ class Seeder:
 
         seeds = []
         x, y = [], []
-        x_axis, y_axis = np.empty([1, iterations]), np.empty([1, iterations])
+        x_axis, y_axis = [], []
 
         while not mfc.empty():
             max_val = mfc.next()
@@ -102,13 +101,16 @@ class Seeder:
                 x.append(opic.time - 1)
 
             if opic.time > 0:
-                y_axis.put(opic.time - 1, current_cash)
-                x_axis.put(opic.time - 1, max_val)
+                x_axis.append(max_val)
+                y_axis.append(current_cash)
             opic.visit(max_val)
 
-        indexes = peakutils.indexes(y_axis[0], thres=threshold / max(y_axis[0]))
+        y_axis = np.array(y_axis)
+        x_axis = np.array(x_axis)
 
-        for seed in x_axis[0][indexes]:
+        indexes = peakutils.indexes(y_axis, thres=threshold / max(y_axis))
+
+        for seed in x_axis[indexes]:
             seed = seed_switch[return_type](seed)
             if seed not in seeds:
                 for v in G[seed]:
@@ -123,8 +125,8 @@ class Seeder:
                     print("Vertex: %s, Page Rank: %.2f" % (index, opic.cash_history[index]))
 
         if should_plot:
-            plt.plot(indexes, y_axis[0][indexes])
-            print("Number of peaks: %s " % len(y_axis[0][indexes]))
+            plt.plot(indexes, y_axis[indexes])
+            print("Number of peaks: %s " % len(y_axis[indexes]))
             print("Number of seeds: %s " % len(seeds))
             # Print local maximums
             plt.plot(x, y, linewidth=0.5)
@@ -142,15 +144,11 @@ class Seeder:
             'string': self.format_string
         }
 
-        iterations = len(G.nodes()) + 1
-
         seeds = []
         x, y = [], []
-        x_axis = np.empty([1, iterations])
 
         while not mfc.empty():
             max_vertex = mfc.next()
-            x_axis.put(mfc.i, max_vertex)
             x.append(max_vertex)
 
         y_axis = np.array(mfc.y)
@@ -167,8 +165,8 @@ class Seeder:
                 seeds.append(seed)
 
         if should_plot:
-            plt.plot(indexes, y_axis[0][indexes])
-            print("Number of peaks: %s " % len(y_axis[0][indexes]))
+            plt.plot(indexes, y_axis[indexes])
+            print("Number of peaks: %s " % len(y_axis[indexes]))
             print("Number of seeds: %s " % len(seeds))
             # Print local maximums
             plt.plot(x, y, linewidth=0.5)
