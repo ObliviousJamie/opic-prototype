@@ -107,6 +107,7 @@ class Seeder:
             opic.visit(max_val)
 
         indexes = peakutils.indexes(y_axis[0], thres=threshold / max(y_axis[0]))
+
         for seed in x_axis[0][indexes]:
             seed = seed_switch[return_type](seed)
             if seed not in seeds:
@@ -130,5 +131,48 @@ class Seeder:
             mfc.plot()
             plt.show()
 
+        return seeds
+
+    def seed_MFC(self, G, start, threshold, should_plot=False, return_type="integer", print_ranks=False):
+        mfc = MFC(G, start)
+
+        seed_switch = {
+            'integer': self.format_integer,
+            'float': self.format_float,
+            'string': self.format_string
+        }
+
+        iterations = len(G.nodes()) + 1
+
+        seeds = []
+        x, y = [], []
+        x_axis = np.empty([1, iterations])
+
+        while not mfc.empty():
+            max_vertex = mfc.next()
+            x_axis.put(mfc.i, max_vertex)
+            x.append(max_vertex)
+
+        y_axis = np.array(mfc.y)
+        x_axis = np.array(x)
+
+        indexes = peakutils.indexes(y_axis, thres=threshold / max(y_axis))
+
+        for seed in x_axis[indexes]:
+            seed = seed_switch[return_type](seed)
+            if seed not in seeds:
+                for v in G[seed]:
+                    if v in seeds:
+                        break
+                seeds.append(seed)
+
+        if should_plot:
+            plt.plot(indexes, y_axis[0][indexes])
+            print("Number of peaks: %s " % len(y_axis[0][indexes]))
+            print("Number of seeds: %s " % len(seeds))
+            # Print local maximums
+            plt.plot(x, y, linewidth=0.5)
+            mfc.plot()
+            plt.show()
 
         return seeds

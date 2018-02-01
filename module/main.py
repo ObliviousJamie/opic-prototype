@@ -1,6 +1,9 @@
+from random import choice
+
 import matplotlib.pyplot as plt
 import networkx as nx
 from module.PPR import PPR
+from module.coverage_plot import Coverage
 from module.crawlStats import CrawlStats
 from module.importData import ImportData
 from module.seeder import Seeder
@@ -50,7 +53,7 @@ def community_stats(ground_truth_communities, found):
 def karate(mfc=True):
     K = nx.karate_club_graph()
     seeder = Seeder()
-    #seeds = seeder.seed(K, 31, 1.6, True, return_type="integer", print_ranks=True)
+    # seeds = seeder.seed(K, 31, 1.6, True, return_type="integer", print_ranks=True)
     if mfc:
         seeds = seeder.seed_MFC_rank(K, 31, 1.6, True, return_type="integer", print_ranks=True)
     else:
@@ -73,7 +76,6 @@ def imported(import_path, start, ground_truth='', threshold=1.0, mfc=True):
     else:
         seeds = seeder.seed(I, start, threshold, True, return_type="string", print_ranks=False)
 
-
     discovered_communities = calculate_seeds(seeds, I, is_large=True, should_draw=False)
 
     if ground_truth != '':
@@ -91,24 +93,90 @@ def imported(import_path, start, ground_truth='', threshold=1.0, mfc=True):
         print("Average community size %s" % average_size)
 
 
-def similar_communities():
-    """ Finds arrays that are similar and returns them as a hash table
-    This is used to discover similar seeds
-    """
-    pass
+def plot_coverages(graph, seed_dict):
+    plt.xlabel("% Coverage")
+    plt.ylabel("Maximum Conductance")
+    plt.axis([0, 100, 0, 1])
+    print(seed_dict.keys())
+    for label, seeds in seed_dict.items():
+        print(label, len(seeds))
+        Coverage(graph, seeds).plot_coverage(label)
+    plt.legend()
+    plt.show()
+
+
+def plot_multicoverage(import_path='', graph=''):
+    if import_path != '':
+        imports = ImportData()
+        I = imports.text_graph(import_path)
+        graph = prune_unconnected_components(I)
+    seed_dict = {}
+
+    start = choice(list(graph.nodes))
+
+    seeder = Seeder()
+
+
+    print("Processing MFC low seed")
+    mfc_seed_low = seeder.seed_MFC_rank(graph, start, 2.98, False, return_type="string", print_ranks=False)
+    #mfc_seed_high = seeder.seed_MFC_rank(graph, start, 3.45, False, return_type="string", print_ranks=False)
+
+    print("Processing OPIC low seed")
+    opic_seed_low = seeder.seed(graph, start, 1.43, False, return_type="string", print_ranks=False)
+    #opic_seed_high = seeder.seed(graph, start, 1.58, False, return_type="string", print_ranks=False)
+
+    print("Processing MFC ref")
+    mfc_ref = seeder.seed_MFC(graph, start, 0.8, False, return_type="string", print_ranks=False)
+
+    random_small = []
+    random_large = []
+
+    print("Picking random")
+    iterations = len(graph.nodes) / 20
+    for i in range(int(iterations)):
+        rnd = choice(list(graph.nodes))
+        if i <= 30:
+            random_small.append(rnd)
+        random_large.append(rnd)
+
+    print("Processing MFC low seed")
+    seed_dict["mfc-seed-low-thres"] = mfc_seed_low
+    #seed_dict["mfc-seed-high-thres"] = mfc_seed_high
+    print("Processing OPIC low seed")
+    seed_dict["opic-seed-low-thres"] = opic_seed_low
+    #seed_dict["opic-seed-high-thres"] = opic_seed_high
+    #seed_dict["random_small"] = random_small
+    print("Processing random")
+    seed_dict["random_large"] = random_large
+
+    seed_dict["mfc-ref"] = mfc_ref
+
+    print("Plotting graph...")
+    plot_coverages(graph, seed_dict)
 
 
 def flip_list_dict(dictionary):
     new_dict = {}
     for key, value_list in dictionary.items():
         for item in value_list:
-            new_dict.setdefault(item,list())
+            new_dict.setdefault(item, list())
             new_dict[item].append(key)
     return new_dict
 
 
 def prune_unconnected_components(graph):
     current = graph
+    #print("Degree", graph.degree('653'))
+    #print("Degree", graph['653'])
+    #print("Edges", graph.edges('653'))
+    #print("Adj", graph.adj['653'])
+
+    #print()
+    #print("Degree", graph.degree('651'))
+    #print("Degree", graph['651'])
+    #print("Edges", graph.edges('651'))
+    #print("Adj", graph.adj['651'])
+    #print(list(graph.nodes_with_selfloops()))
     if not nx.is_connected(graph):
         connected_subgraphs = nx.connected_component_subgraphs(graph)
         current = next(connected_subgraphs)
@@ -121,47 +189,53 @@ def prune_unconnected_components(graph):
 
 # Built in graphs
 
-#karate()
+# karate()
 
 
 # Imported Graphs
 
-imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=2.7)
+#imported('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=2.7)
 
+#import_coverage('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=2.7)
+
+#K = nx.karate_club_graph()
+plot_multicoverage('../data/edgelist/eu-core')
+#plot_multicoverage('../data/edgelist/dblp')
+#plot_multicoverage(graph=K)
 
 # Coverage
 
-#imports = ImportData()
-#I = imports.text_graph('../data/edgelist/eu-core')
+# imports = ImportData()
+# I = imports.text_graph('../data/edgelist/eu-core')
 #
-#I = prune_unconnected_components(I)
+# I = prune_unconnected_components(I)
 #
-#real_communities = imports.ground_truth('../data/ground-truth/eu-core')
-#membership = flip_list_dict(real_communities)
+# real_communities = imports.ground_truth('../data/ground-truth/eu-core')
+# membership = flip_list_dict(real_communities)
 
-#crawl = CrawlStats()
-#crawl.coverage_plot(I, real_communities, membership)
-#eu = '../data/edgelist/eu-core'
-#eu_truth = '../data/ground-truth/eu-core'
+# crawl = CrawlStats()
+# crawl.coverage_plot(I, real_communities, membership)
+# eu = '../data/edgelist/eu-core'
+# eu_truth = '../data/ground-truth/eu-core'
 #
-#dblp = '../data/edgelist/dblp'
-#dblp_truth = '../data/ground-truth/dblp'
-#dblp_truth_min = '../data/ground-truth/dblp_5000'
+# dblp = '../data/edgelist/dblp'
+# dblp_truth = '../data/ground-truth/dblp'
+# dblp_truth_min = '../data/ground-truth/dblp_5000'
 #
-#imports = ImportData()
-#I = imports.text_graph(eu)
+# imports = ImportData()
+# I = imports.text_graph(eu)
 #
-#I = prune_unconnected_components(I)
+# I = prune_unconnected_components(I)
 #
-#real_communities = imports.ground_truth(eu_truth)
-#membership = flip_list_dict(real_communities)
+# real_communities = imports.ground_truth(eu_truth)
+# membership = flip_list_dict(real_communities)
 
-#print(len(real_communities))
-#print(len(membership))
+# print(len(real_communities))
+# print(len(membership))
 #
 #
-#crawl = CrawlStats()
-#crawl.coverage_plot(I, real_communities, membership)
+# crawl = CrawlStats()
+# crawl.coverage_plot(I, real_communities, membership)
 # imported('../data/edgelist/hepph-phenomenology', '17010', threshold=1.4)
 # benchmark_graph = LFR_benchmark_graph(1000,3,1.5,0.1, average_degree=30, min_community=50)
 
