@@ -2,6 +2,9 @@ from random import choice
 
 import matplotlib.pyplot as plt
 import networkx as nx
+
+from module.LFR.plotLFR import plotLFR
+from module.LFR.readLFR import readLFR
 from module.PPR import PPR
 from module.coverage_plot import Coverage
 from module.crawlStats import CrawlStats
@@ -9,7 +12,6 @@ from module.importData import ImportData
 from module.seeder import Seeder
 from module.stats import Stats
 from networkx.algorithms.community import LFR_benchmark_graph
-
 
 def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False, use_neighborhood=True):
     pos = nx.spring_layout(G)
@@ -206,7 +208,7 @@ def prune_unconnected_components(graph):
 #import_coverage('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=2.7)
 
 #K = nx.karate_club_graph()
-plot_multicoverage('../data/edgelist/eu-core')
+#plot_multicoverage('../data/edgelist/eu-core')
 #plot_multicoverage('../data/edgelist/dblp')
 #plot_multicoverage(graph=K)
 
@@ -254,3 +256,12 @@ plot_multicoverage('../data/edgelist/eu-core')
 #                        min_community=20, seed=10)
 # communities = {frozenset(G.nodes[v]['community']) for v in G}
 # print(communities)
+
+
+#reader = readLFR([1000,5000],[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8])
+#lfr = plotLFR(reader, Seeder())
+#lfr.compute_communities()
+
+reader = readLFR([1000,5000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
+lfr = plotLFR(reader, Seeder())
+lfr.compute_communities()
