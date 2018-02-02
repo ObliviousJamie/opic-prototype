@@ -86,7 +86,6 @@ class Seeder:
 
         opic = OPIC(G, 40)
         opic.visit(start)
-        iterations = len(G.nodes())
 
         seeds = []
         x, y = [], []

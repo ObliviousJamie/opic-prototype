@@ -118,7 +118,7 @@ def plot_multicoverage(import_path='', graph=''):
 
 
     print("Processing MFC low seed")
-    mfc_seed_low = seeder.seed_MFC_rank(graph, start, 2.9, False, return_type="string", print_ranks=False)
+    mfc_seed_low = seeder.seed_MFC_rank(graph, start, 2.8, False, return_type="string", print_ranks=False)
     #mfc_seed_high = seeder.seed_MFC_rank(graph, start, 3.45, False, return_type="string", print_ranks=False)
 
     print("Processing OPIC low seed")
