@@ -268,5 +268,8 @@ reader = readLFR([1000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
 #lfr.compute_communities(1.62)
 
 lfr = writeLFR(reader, Seeder())
-lfr.calculate_communities(2.0)
+#lfr.calculate_communities(2.0)
 #lfr.save(2.0)
+
+lfr_plot = plotLFR([('mfcrank', '2.0')])
+lfr_plot.plot([1000],[0.1,0.3],[0.1, 0.2, 0.3, 0.4, 0.5])

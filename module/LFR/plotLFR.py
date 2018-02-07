@@ -2,43 +2,60 @@ from random import choice
 
 import time
 
+import os
+
 from module.PPR import PPR
+import subprocess
+import matplotlib.pyplot as plt
 
 
 class plotLFR:
 
-    def __init__(self, LFR_reader, seeder):
-        self.LFR_reader = LFR_reader
-        self.seeder = seeder
+    def __init__(self, method_thres_pair, save_loc=''):
+        self.method_tuple_arr = method_thres_pair
+        self.dir = os.path.dirname(__file__)
+        self.program_prefix = os.path.join(self.dir, "nmi/onmi")
+        self.community_prefix = os.path.join(self.dir, "../../data/lfr/communities/")
+        self.save_loc = save_loc
 
-    def compute_communities(self, threshold):
-        lfr_graphs = self.LFR_reader.read()
-        communities = {}
+    def plot(self, sizes, mixes, overlaps):
 
-        for key, value in lfr_graphs.items():
-            graph, membership = value
+        for size in sizes:
+            for mix in mixes:
+                plt.title("Size: %s, Mixing factor: %s" % (size, mix))
+                plt.xlabel('Fraction of overlapping nodes')
+                plt.ylabel('NMI')
+                plt.ylim([0, 1])
 
-            start = choice(list(graph.nodes))
+                for method, threshold in self.method_tuple_arr:
+                    x, y = self.read_NMIs(method, threshold, size, mix, overlaps)
+                    plt.plot(x, y, label=method)
+                plt.legend()
+                plt.show()
 
-            start_time = time.time()
+    def read_NMIs(self, method, threshold, size, mix, overlaps):
+        score_arr = []
+        overlap_arr = []
+        for overlap in overlaps:
+            nmi = self.read(method, threshold, size, mix, overlap)
+            nmi = float(nmi)
+            score_arr.append(nmi)
+            overlap_arr.append(str(overlap))
 
-            seeds = self.seeder.seed(graph, start, threshold, return_type="string")
-            seed_time = time.time() - start_time
-            print("Time to compute seeds: %s" % (seed_time))
+        return overlap_arr, score_arr
 
-            start_time = time.time()
+    def read(self, method, threshold, size, mix, overlap):
+        true_file = "%s%s_%s_%s_truth.txt" % (self.community_prefix, size, mix, overlap)
+        result_file = "%s%s_%s_%s_%s_t%s_result.txt" % (self.community_prefix, size, mix, overlap, method, threshold)
+        arg_string = "%s %s %s" % (self.program_prefix, true_file, result_file)
 
-            ppr = PPR(graph)
-            communities[key] = []
-            for seed in seeds:
-                seed = graph[seed]
-                bestset = ppr.PPRRank(graph,0.99,0.001,seed)
-                communities[key].append(bestset)
+        out = subprocess.run(arg_string, check=True, shell=True, stdout=subprocess.PIPE)
 
-            ppr_time = time.time() - start_time
-            print("Time to compute ppr: %s" % (ppr_time))
+        decoded_array = out.stdout \
+            .decode("utf-8") \
+            .replace('\t', '\n') \
+            .split('\n')
 
+        nmi = decoded_array[4]
 
-
-
-
+        return nmi

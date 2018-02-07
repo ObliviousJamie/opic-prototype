@@ -1,39 +1,47 @@
+import os
+
 from module.PPR import PPR
 
 
 class writeLFR:
 
-    def __init__(self, LFR_reader, seeder):
+    def __init__(self, LFR_reader, seeder, write_truth=True):
         self.LFR_reader = LFR_reader
         self.seeder = seeder
 
-    def save(self, truth, result):
-        truth_reverse = {}
+        prefix = "../../data/lfr/communities/"
+        location = os.path.join(LFR_reader.dir, prefix)
+        self.location = location
 
-        for vertex, community_array in truth.items():
-            for community in community_array:
-                truth_reverse.setdefault(community, list())
-                truth_reverse[community].append(vertex)
+        self.write_truth = write_truth
 
-        print(len(truth_reverse))
-        print(len(result.keys()))
-        print(result)
-        print(truth)
-        print(truth_reverse)
+    def save(self, truth, result, key, threshold=0, method=""):
 
-        exit()
+        nodes, mix, overlap = key
+        unique_key = "%s_%s_%s" % (nodes, mix, overlap)
+        unique_result_key = "%s_t%s" % (method, threshold)
 
-        # TODO Write out both truth and result into separate files called <vertex_no>_<tau>_<overlap>_<truth || result>
+        result_f = "%s%s_%s_result.txt" % (self.location, unique_key, unique_result_key)
 
-        with open("test.txt", "w") as f:
-            for key in result.keys():
-                output = result[key].join(" ")
-                f.write(output)
+        print("Seeds: %s  Key: %s" % (len(result[key]), key))
 
-        with open("test2.txt", "w") as f:
-            for key in truth_reverse.keys():
-                output = result[key].join(" ")
-                f.write(output)
+        with open(result_f, "w") as f:
+            for community_set in result[key]:
+                output = ' '.join(community_set)
+                print(output, file=f)
+
+        if self.write_truth:
+            truth_f = "%s%s_truth.txt" % (self.location, unique_key)
+            truth_reverse = {}
+
+            for vertex, community_array in truth.items():
+                for community in community_array:
+                    truth_reverse.setdefault(community, list())
+                    truth_reverse[community].append(vertex)
+            with open(truth_f, "w") as f:
+                for value in truth_reverse.values():
+                    output = ' '.join(value)
+                    print(output, file=f)
 
     def calculate_communities(self, threshold, start='1', method='mfcrank', write=True):
         lfr_graphs = self.LFR_reader.read()
@@ -54,7 +62,7 @@ class writeLFR:
                 bestset = ppr.PPRRank(graph, 0.99, 0.001, seed)
                 communities[key].append(bestset)
 
-            self.save(truth=membership, result=communities)
+            self.save(truth=membership, result=communities, key=key, threshold=threshold, method=method)
 
         return communities, memberships
 
