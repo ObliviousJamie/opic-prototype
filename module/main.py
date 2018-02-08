@@ -99,11 +99,14 @@ def imported(import_path, start, ground_truth='', threshold=1.0, mfc=True):
 def plot_coverages(graph, seed_dict):
     plt.xlabel("% Coverage")
     plt.ylabel("Maximum Conductance")
-    plt.axis([0, 100, 0, 1])
+    plt.axis([0, 100, 0, 1.01])
     print(seed_dict.keys())
     for label, seeds in seed_dict.items():
         print(label, len(seeds))
-        Coverage(graph, seeds).plot_coverage(label)
+        if label == 'mfc-original':
+            Coverage(graph, seeds).plot_coverage_mfc()
+        else:
+            Coverage(graph, seeds).plot_coverage(label)
     plt.legend()
     plt.show()
 
@@ -155,6 +158,7 @@ def plot_multicoverage(import_path='', graph=''):
 
     seed_dict["mfc-ref-original"] = mfc_ref
     seed_dict["mfc-ref-highest"] = mfc_ref_high
+    seed_dict['mfc-original'] = []
 
     print("Plotting graph...")
     plot_coverages(graph, seed_dict)
@@ -171,18 +175,6 @@ def flip_list_dict(dictionary):
 
 def prune_unconnected_components(graph):
     current = graph
-    #print("Degree", graph.degree('653'))
-    #print("Degree", graph['653'])
-    #print("Edges", graph.edges('653'))
-    #print("Adj", graph.adj['653'])
-
-    #print()
-    #print("Degree", graph.degree('651'))
-    #print("Degree", graph['651'])
-    #print("Edges", graph.edges('651'))
-    #print("Adj", graph.adj['651'])
-    #print(list(graph.nodes_with_selfloops()))
-
     #Remove self loops
     for vertex in graph.nodes_with_selfloops():
         graph.remove_edge(vertex,vertex)
@@ -209,7 +201,7 @@ def prune_unconnected_components(graph):
 #import_coverage('../data/edgelist/eu-core', '7', ground_truth='../data/ground-truth/eu-core', threshold=2.7)
 
 #K = nx.karate_club_graph()
-#plot_multicoverage('../data/edgelist/eu-core')
+plot_multicoverage('../data/edgelist/eu-core')
 #plot_multicoverage('../data/edgelist/dblp')
 #plot_multicoverage(graph=K)
 
@@ -263,7 +255,7 @@ def prune_unconnected_components(graph):
 #lfr = plotLFR(reader, Seeder())
 #lfr.compute_communities()
 
-reader = readLFR([1000,5000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
+#reader = readLFR([1000,5000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
 #lfr = plotLFR(reader, Seeder())
 #lfr.compute_communities(1.62)
 
@@ -274,5 +266,5 @@ reader = readLFR([1000,5000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0
 #lfr2.calculate_communities(0.8, method='mfcseed')
 #lfr.save(2.0)
 
-lfr_plot = plotLFR([('mfcrank', '2.0'),('opic','1.6'),('mfcseed', '0.8')], save_loc="/home/jmoreland/Pictures/PRJ")
-lfr_plot.plot([1000, 5000],[0.1,0.3],[0.1, 0.2, 0.3, 0.4, 0.5])
+#lfr_plot = plotLFR([('mfcrank', '2.0'),('opic','1.6'),('mfcseed', '0.8')], save_loc="/home/jmoreland/Pictures/PRJ")
+#lfr_plot.plot([1000, 5000],[0.1,0.3],[0.1, 0.2, 0.3, 0.4, 0.5])

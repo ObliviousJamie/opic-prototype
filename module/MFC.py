@@ -5,9 +5,10 @@ class MFC:
 
     def __init__(self, G, start):
         self.G = G
+        self.start = start
         self.reference_dictionary = {start: 0}
         self.visited = [start]
-        self.x,self.y = [], []
+        self.x, self.y = [], []
         self.i = 0
 
     def next(self):
@@ -39,6 +40,46 @@ class MFC:
     def empty(self):
         return not self.reference_dictionary.keys()
 
+    def communities(self, delta=0.5):
+        self.reset()
+
+        community_index = 0
+
+        smin = 0.
+        smax = 0.
+
+        community_dict = {}
+        community_dict[0] = set()
+        last_ref = 0
+
+        while not self.empty():
+            current_max = self.next()
+            current_ref = self.y.pop()
+
+            if current_ref > smax:
+                smax = current_ref
+            elif current_ref < smin:
+                smin = current_ref
+
+            target_diff = (abs(smax - smin)) * delta
+
+            if abs(current_ref - last_ref) > target_diff:
+                community_index += 1
+                community_dict[community_index] = set()
+
+            community_dict[community_index].add(current_max)
+
+            last_ref = current_ref
+
+        self.reset()
+        return community_dict
+
+    def reset(self):
+        self.reference_dictionary = {self.start: 0}
+        self.visited = [self.start]
+        self.x, self.y = [], []
+        self.i = 0
+
     def plot(self):
         plt.plot(self.x, self.y, linewidth=2.0)
-        #plt.show()
+        # plt.show()

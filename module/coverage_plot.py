@@ -1,3 +1,9 @@
+from random import choice
+
+import networkx as nx
+from networkx import algorithms
+
+from module.MFC import MFC
 from module.PPR import PPR
 import matplotlib.pyplot as plt
 
@@ -34,3 +40,35 @@ class Coverage:
                     y.append(conductance)
 
         plt.plot(x, y, label=label ,linewidth=2)
+
+    def plot_coverage_mfc(self):
+        start = choice(list(self.graph.nodes))
+
+        conductances = []
+        coverages = []
+
+        mfc = MFC(self.graph, start)
+        community_dict = mfc.communities(delta=0.5)
+        conductance_array = []
+        for _, community in community_dict.items():
+            print(community)
+            conductance = nx.algorithms.conductance(self.graph, community)
+            conductance_array.append((conductance, community))
+            print("Conductance", conductance)
+
+        sorted_communities = sorted(conductance_array)
+        print(sorted_communities)
+
+        total_visited = 0
+
+        for conductance, community in sorted_communities:
+            for vertex in community:
+                conductances.append(conductance)
+                total_visited += 1
+                coverage = ( total_visited / len(self.graph.nodes)) * 100
+                coverages.append(coverage)
+
+        print("Graph", len(self.graph.nodes))
+        print("Coverage", total_visited)
+        plt.plot(coverages, conductances, label="mfc-original", linewidth=2)
+
