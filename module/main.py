@@ -263,13 +263,16 @@ def prune_unconnected_components(graph):
 #lfr = plotLFR(reader, Seeder())
 #lfr.compute_communities()
 
-reader = readLFR([1000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
+reader = readLFR([1000,5000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
 #lfr = plotLFR(reader, Seeder())
 #lfr.compute_communities(1.62)
 
-lfr = writeLFR(reader, Seeder())
-#lfr.calculate_communities(2.0)
+#lfr = writeLFR(reader, Seeder())
+#lfr2 = writeLFR(reader, Seeder(), write_truth=False)
+#lfr.calculate_communities(2.0, method='mfcrank')
+#lfr2.calculate_communities(1.6, method='opic')
+#lfr2.calculate_communities(0.8, method='mfcseed')
 #lfr.save(2.0)
 
-lfr_plot = plotLFR([('mfcrank', '2.0')])
-lfr_plot.plot([1000],[0.1,0.3],[0.1, 0.2, 0.3, 0.4, 0.5])
+lfr_plot = plotLFR([('mfcrank', '2.0'),('opic','1.6'),('mfcseed', '0.8')], save_loc="/home/jmoreland/Pictures/PRJ")
+lfr_plot.plot([1000, 5000],[0.1,0.3],[0.1, 0.2, 0.3, 0.4, 0.5])

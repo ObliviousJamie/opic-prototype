@@ -23,7 +23,7 @@ class writeLFR:
 
         result_f = "%s%s_%s_result.txt" % (self.location, unique_key, unique_result_key)
 
-        print("Seeds: %s  Key: %s" % (len(result[key]), key))
+        print("Seeds: %s Key: %s Method: %s" % (len(result[key]), key, method))
 
         with open(result_f, "w") as f:
             for community_set in result[key]:
@@ -53,6 +53,7 @@ class writeLFR:
             graph, membership = value
             memberships.append(membership)
 
+            print("%s Seeding..." % method)
             seeds = self.decide_seed(graph, start, threshold, method)
 
             ppr = PPR(graph)

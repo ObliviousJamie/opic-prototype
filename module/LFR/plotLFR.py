@@ -31,7 +31,12 @@ class plotLFR:
                     x, y = self.read_NMIs(method, threshold, size, mix, overlaps)
                     plt.plot(x, y, label=method)
                 plt.legend()
-                plt.show()
+                if self.save_loc != '':
+                    now = time.strftime('M%m_D%d_min%M')
+                    save = "%s/NMI_lfr_%s_%s_%s.png" % (self.save_loc, size, mix, now)
+                    print("Saving plot at %s" % save)
+                    plt.savefig(save)
+                plt.close()
 
     def read_NMIs(self, method, threshold, size, mix, overlaps):
         score_arr = []
