@@ -43,13 +43,12 @@ class MFC:
     def communities(self, delta=0.5):
         self.reset()
 
-        community_index = 0
+        community_index = -1
 
         smin = 0.
         smax = 0.
 
-        community_dict = {}
-        community_dict[0] = set()
+        community_dict = {community_index: set()}
         last_ref = 0
 
         while not self.empty():
@@ -64,7 +63,7 @@ class MFC:
             target_diff = (abs(smax - smin)) * delta
 
             if abs(current_ref - last_ref) > target_diff:
-                community_index += 1
+                community_index = current_max
                 community_dict[community_index] = set()
 
             community_dict[community_index].add(current_max)

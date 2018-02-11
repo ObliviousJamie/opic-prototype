@@ -183,3 +183,19 @@ class Seeder:
             plt.show()
 
         return seeds
+
+
+    def mfc(self, G, start, delta=0.5):
+        mfc = MFC(G, start)
+        seeds = []
+
+        communities = mfc.communities(delta=delta)
+        for seed, _ in communities.items():
+            if seed != -1:
+                seeds.append(seed)
+
+        return seeds
+
+
+
+

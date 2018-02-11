@@ -51,13 +51,10 @@ class Coverage:
         community_dict = mfc.communities(delta=0.5)
         conductance_array = []
         for _, community in community_dict.items():
-            print(community)
             conductance = nx.algorithms.conductance(self.graph, community)
             conductance_array.append((conductance, community))
-            print("Conductance", conductance)
 
         sorted_communities = sorted(conductance_array)
-        print(sorted_communities)
 
         total_visited = 0
 
@@ -68,7 +65,5 @@ class Coverage:
                 coverage = ( total_visited / len(self.graph.nodes)) * 100
                 coverages.append(coverage)
 
-        print("Graph", len(self.graph.nodes))
-        print("Coverage", total_visited)
         plt.plot(coverages, conductances, label="mfc-original", linewidth=2)
 
