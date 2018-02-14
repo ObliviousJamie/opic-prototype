@@ -196,6 +196,31 @@ class Seeder:
 
         return seeds
 
+    def spreadhub(self, G, seed_limit):
+        degree_seq = sorted([(degree,vertex) for vertex, degree in G.degree()], reverse=True)
+
+        print(degree_seq)
+
+        seeds = []
+        visited = set()
+
+        last_degree = -1
+        for degree, vertex in degree_seq:
+            if len(seeds) < seed_limit and vertex not in visited:
+                seeds.append(vertex)
+                visited.update(list(G[vertex]))
+            if len(seeds) >= seed_limit and vertex not in visited:
+                if degree == last_degree:
+                    seeds.append(vertex)
+                    visited.update(list(G[vertex]))
+                else:
+                    return seeds
+            last_degree = degree
+
+        print("Not enough seeds", len(seeds))
+        return seeds
+
+
 
 
 

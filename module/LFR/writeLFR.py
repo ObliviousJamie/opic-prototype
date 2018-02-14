@@ -76,4 +76,6 @@ class writeLFR:
             seeds = self.seeder.seed_MFC_rank(graph, start, threshold, return_type="string")
         elif method == 'mfcseed':
             seeds = self.seeder.seed_MFC_rank(graph, start, threshold, return_type="string")
+        elif method == 'spreadhub':
+            seeds = self.seeder.spreadhub(graph, int(len(graph.nodes) * .2))
         return seeds
