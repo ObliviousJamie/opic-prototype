@@ -52,7 +52,7 @@ class PPR:
         volS = 0.
         cutS = 0.
         bestcond = 1.
-        bestset = sv[0]
+        bestset = {sv[0][0]}
 
         for p in sv:
             s = p[0]  # get the vertex

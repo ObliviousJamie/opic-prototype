@@ -162,6 +162,7 @@ class Seeder:
 
         #y_axis = np.array(mfc.y)
         x_axis = np.array(x)
+        y_axis = np.array(y_axis)
 
         indexes = peakutils.indexes(y_axis, thres=threshold / max(y_axis))
 
@@ -174,12 +175,11 @@ class Seeder:
                 seeds.append(seed)
 
         if should_plot:
-            plt.plot(indexes, y_axis[indexes])
-            print("Number of peaks: %s " % len(y_axis[indexes]))
+            ynp = np.array(y_axis)
+            plt.plot(indexes, ynp[indexes])
+            plt.plot(mfc.x, mfc.y)
+            print("Number of peaks: %s " % len(ynp[indexes]))
             print("Number of seeds: %s " % len(seeds))
-            # Print local maximums
-            plt.plot(x, y, linewidth=0.5)
-            mfc.plot()
             plt.show()
 
         return seeds

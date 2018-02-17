@@ -14,7 +14,8 @@ from module.stats import Stats
 
 
 def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False, use_neighborhood=True):
-    pos = nx.spring_layout(G)
+    if should_draw:
+        pos = nx.spring_layout(G)
 
     ppr = PPR(G)
 
@@ -170,7 +171,7 @@ def prune_unconnected_components(graph):
 # Built in graphs
 
 
-reader = readLFR([50000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
+reader = readLFR([1000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
 
 # Imported Graphs
 
@@ -271,13 +272,15 @@ reader = readLFR([50000],[0.1,0.3], overlapping_fractions=[0.1,0.2,0.3,0.4,0.5])
 
 lfr2 = writeLFR(reader, Seeder())
 #lfr2 = writeLFR(reader, Seeder(), write_truth=True)
-lfr2.calculate_communities(2.0, method='mfcrank')
+#lfr2.calculate_communities(2.0, method='mfcrank')
 # lfr2.calculate_communities(1.6, method='opic')
-lfr2.calculate_communities(0.8, method='mfcseed')
+lfr2.calculate_communities(0.8, method='mfcmin')
+lfr2.calculate_communities(0.2, method='mfcmax')
 #lfr2.calculate_communities(0, method='spreadhub')
 # lfr.save(2.0)
 
 #lfr_plot = plotLFR([('mfcrank', '2.0'),('opic','1.6'),('mfcseed', '0.8'), ('spreadhub', '0')], save_loc="/home/jmoreland/Pictures/PRJ")
-lfr_plot = plotLFR([('mfcrank', '2.0'),('mfcseed', '0.8'), ('spreadhub', '0')], save_loc="/home/jmoreland/Pictures/PRJ")
+lfr_plot = plotLFR([('mfcrank', '2.0'),('mfcmin', '0.8'), ('spreadhub', '0'), ('mfcmax','0.2')], save_loc="/home/jmoreland/Pictures/PRJ")
 #lfr_plot = plotLFR([ ('spreadhub', '0')], save_loc="/home/jmoreland/Pictures/PRJ")
-lfr_plot.plot([50000],[0.1,0.3],[0.1, 0.2, 0.3, 0.4, 0.5])
+lfr_plot.plot([1000],[0.1,0.3],[0.1, 0.2, 0.3, 0.4, 0.5])
+

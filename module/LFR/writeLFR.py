@@ -74,8 +74,10 @@ class writeLFR:
             seeds = self.seeder.seed(graph, start, threshold, return_type="string")
         elif method == 'mfcrank':
             seeds = self.seeder.seed_MFC_rank(graph, start, threshold, return_type="string")
-        elif method == 'mfcseed':
-            seeds = self.seeder.seed_MFC_rank(graph, start, threshold, return_type="string")
+        elif method == 'mfcmin':
+            seeds = self.seeder.seed_MFC(graph, start, threshold, return_type="string")
+        elif method == 'mfcmax':
+            seeds = self.seeder.seed_MFC(graph, start, threshold, return_type="string", min=False)
         elif method == 'spreadhub':
             seeds = self.seeder.spreadhub(graph, int(len(graph.nodes) * .2))
         return seeds
