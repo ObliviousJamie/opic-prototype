@@ -1,8 +1,7 @@
 import networkx as nx
 
 from module.LFR.readLFR import readLFR
-from module.PPR import PPR
-from module.seeding.PPRFilter import PPRFilter
+from module.expansion.PPR import PPR
 from module.seeding.mfc_min_seed import SeedMinMFC
 from module.seeding.mfc_minhub_seed import SeedMinhubMFC
 from module.seeding.mfc_opic_seed import SeedMFCOPIC

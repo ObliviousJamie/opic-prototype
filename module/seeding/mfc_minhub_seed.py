@@ -1,4 +1,4 @@
-from module.MFC import MFC
+from module.crawling.MFC import MFC
 from module.seeding.hub_seed import HubSeeder
 
 

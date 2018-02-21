@@ -1,10 +1,7 @@
-from random import choice
-
 import time
 
 import os
 
-from module.PPR import PPR
 import subprocess
 import matplotlib.pyplot as plt
 

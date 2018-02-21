@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import peakutils
 
-from module.MFC import MFC
-from module.OPIC import OPIC
+from module.crawling.MFC import MFC
+from module.crawling.OPIC import OPIC
 
 
 class Seeder:

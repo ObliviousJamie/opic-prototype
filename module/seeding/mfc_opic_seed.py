@@ -1,8 +1,7 @@
-import peakutils
 import numpy as np
 
-from module.MFC import MFC
-from module.OPIC import OPIC
+from module.crawling.MFC import MFC
+from module.crawling.OPIC import OPIC
 from module.seeding.threshold_seed import ThresholdSeeder
 
 

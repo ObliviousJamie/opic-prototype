@@ -1,6 +1,6 @@
 import os
 
-from module.PPR import PPR
+from module.expansion.PPR import PPR
 
 
 class writeLFR:

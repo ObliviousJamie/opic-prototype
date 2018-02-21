@@ -6,11 +6,11 @@ import networkx as nx
 from module.LFR.plotLFR import plotLFR
 from module.LFR.readLFR import readLFR
 from module.LFR.writeLFR import writeLFR
-from module.PPR import PPR
-from module.coverage_plot import Coverage
-from module.importData import ImportData
+from module.expansion.PPR import PPR
+from module.statistics.coverage_plot import Coverage
+from module.imports.importData import ImportData
 from module.seeder import Seeder
-from module.stats import Stats
+from module.statistics.stats import Stats
 
 
 def calculate_seeds(seeds, G, tol=0.0001, should_draw=True, is_large=False, use_neighborhood=True):

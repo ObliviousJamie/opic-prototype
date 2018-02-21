@@ -1,7 +1,6 @@
 import numpy as np
 
-from module.MFC import MFC
-from module.PPR import PPR
+from module.crawling.MFC import MFC
 from module.seeding.threshold_seed import ThresholdSeeder
 
 
@@ -39,5 +38,5 @@ class SeedMinMFC(ThresholdSeeder):
 
         if self.s_filter is not None:
             seeds = self.s_filter.filter(seeds, G)
-            
+
         return seeds

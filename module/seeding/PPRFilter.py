@@ -1,4 +1,4 @@
-from module.PPR import PPR
+from module.expansion.PPR import PPR
 from module.seeding.seed_filter import DefaultFilter
 
 

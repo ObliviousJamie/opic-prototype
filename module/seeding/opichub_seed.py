@@ -1,4 +1,4 @@
-from module.OPIC import OPIC
+from module.crawling.OPIC import OPIC
 from module.seeding.hub_seed import HubSeeder
 
 

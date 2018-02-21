@@ -5,7 +5,7 @@ import copy
 
 import time
 
-from module.OPIC import OPIC
+from module.crawling.OPIC import OPIC
 
 
 # TODO plot size of communities found
