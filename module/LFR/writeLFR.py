@@ -3,7 +3,7 @@ import os
 from module.expansion.PPR import PPR
 
 
-class writeLFR:
+class WriteLFR:
 
     def __init__(self, LFR_reader, seeder, write_truth=True):
         self.LFR_reader = LFR_reader
@@ -43,18 +43,17 @@ class writeLFR:
                     output = ' '.join(value)
                     print(output, file=f)
 
-    def calculate_communities(self, threshold, start='1', method='mfcrank', write=True):
+    def calculate_communities(self, seeder):
         lfr_graphs = self.LFR_reader.read()
         communities = {}
         memberships = []
-        start = start
 
         for key, value in lfr_graphs.items():
             graph, membership = value
             memberships.append(membership)
 
-            print("%s Seeding..." % method)
-            seeds = self.decide_seed(graph, start, threshold, method)
+            print("%s Seeding..." % seeder.name)
+            seeds = seeder.seed(graph)
 
             ppr = PPR(graph)
             communities[key] = []
@@ -63,21 +62,7 @@ class writeLFR:
                 bestset = ppr.PPRRank(graph, 0.99, 0.001, seed)
                 communities[key].append(bestset)
 
-            self.save(truth=membership, result=communities, key=key, threshold=threshold, method=method)
+            self.save(truth=membership, result=communities, key=key, threshold=seeder.threshold, method=seeder.name)
 
         return communities, memberships
 
-    # TODO refactor
-    def decide_seed(self, graph, start, threshold, method):
-        seeds = []
-        if method == 'opic':
-            seeds = self.seeder.seed(graph, start, threshold, return_type="string")
-        elif method == 'mfcrank':
-            seeds = self.seeder.seed_MFC_rank(graph, start, threshold, return_type="string")
-        elif method == 'mfcmin':
-            seeds = self.seeder.seed_MFC(graph, start, threshold, return_type="string")
-        elif method == 'mfcmax':
-            seeds = self.seeder.seed_MFC(graph, start, threshold, return_type="string", min=False)
-        elif method == 'spreadhub':
-            seeds = self.seeder.spreadhub(graph, int(len(graph.nodes) * .2))
-        return seeds
