@@ -1,15 +1,16 @@
-import peakutils
 import numpy as np
 
 from module.MFC import MFC
+from module.PPR import PPR
 from module.seeding.threshold_seed import ThresholdSeeder
 
 
 class SeedMinMFC(ThresholdSeeder):
 
-    def __init__(self, threshold, start=None, return_type="integer"):
+    def __init__(self, threshold, start=None, return_type="integer", s_filter= None):
         super(SeedMinMFC, self).__init__(threshold=threshold, return_type=return_type)
         self.start = start
+        self.s_filter = s_filter
 
     def seed(self, G):
         start = self.start
@@ -36,4 +37,7 @@ class SeedMinMFC(ThresholdSeeder):
 
         seeds = self.pick_peaks(x_axis, y_axis, G)
 
+        if self.s_filter is not None:
+            seeds = self.s_filter.filter(seeds, G)
+            
         return seeds

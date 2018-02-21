@@ -1,16 +1,12 @@
-import numpy as np
-import heapq
-
 from module.MFC import MFC
-from module.seeding.threshold_seed import ThresholdSeeder
+from module.seeding.hub_seed import HubSeeder
 
 
-class SeedMinMFC(ThresholdSeeder):
+class SeedMinhubMFC(HubSeeder):
 
-    def __init__(self, threshold, seed_limit, start=None, return_type="integer"):
-        super(SeedMinMFC, self).__init__(threshold=threshold, return_type=return_type)
+    def __init__(self, seed_limit, start=None, return_type="string"):
+        super(SeedMinhubMFC, self).__init__(seed_limit=seed_limit, return_type=return_type)
         self.start = start
-        self.seed_limit = seed_limit
 
     def seed(self, G):
         start = self.start
@@ -20,6 +16,7 @@ class SeedMinMFC(ThresholdSeeder):
         mfc = MFC(G, start)
 
         heap = []
+        candidate_backlog = []
 
         while not mfc.empty():
             max_vertex = mfc.next()
@@ -30,28 +27,12 @@ class SeedMinMFC(ThresholdSeeder):
 
             neighbor_tuple = self.neighbor(G, max_vertex, heap)
             if neighbor_tuple is not None:
-                self.resolve_neighborhood(neighbor_tuple, ref_pair, heap)
+                if self.is_candidate(neighbor_tuple, ref_pair):
+                    candidate_backlog.append(ref_pair)
             else:
                 self.maintain_heap(heap, ref_pair)
 
-        print(sorted(heap))
+        seeds = self.filter_candidates(candidate_backlog, heap, G)
 
-        return heap
+        return seeds
 
-    def maintain_heap(self, heap, ref_tuple):
-        if len(heap) < self.seed_limit:
-            heapq.heappush(heap, ref_tuple)
-        else:
-            heapq.heappushpop(heap, ref_tuple)
-
-    def resolve_neighborhood(self, heap_pair, ref_pair, heap):
-        if ref_pair[0] > heap_pair[0]:
-            heap[heap.index(heap_pair)] = ref_pair
-            heapq.heapify(heap)
-            print("Resolve", ref_pair, heap_pair)
-
-    def neighbor(self, graph, vertex, heap):
-        for ref, min_node in heap:
-            if graph.has_edge(vertex, min_node):
-                return (ref, min_node)
-        return None

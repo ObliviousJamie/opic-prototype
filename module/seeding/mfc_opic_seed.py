@@ -8,9 +8,10 @@ from module.seeding.threshold_seed import ThresholdSeeder
 
 class SeedMFCOPIC(ThresholdSeeder):
 
-    def __init__(self, threshold, start=None, return_type="integer"):
+    def __init__(self, threshold, start=None, return_type="integer", s_filter=None):
         super(SeedMFCOPIC, self).__init__(threshold=threshold, return_type=return_type)
         self.start = start
+        self.s_filter = s_filter
 
     def seed(self, G):
         start = self.start
@@ -37,5 +38,8 @@ class SeedMFCOPIC(ThresholdSeeder):
         x_axis = np.array(x_axis)
 
         seeds = self.pick_peaks(x_axis, y_axis, G)
+
+        if self.s_filter is not None:
+            seeds = self.s_filter.filter(seeds, G)
 
         return seeds
