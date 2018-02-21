@@ -6,6 +6,7 @@ class Spreadhub(Seeder):
     def __init__(self, seed_limit, return_type='string'):
         super(Spreadhub, self).__init__(return_type=return_type)
         self.seed_limit = seed_limit
+        self.name = 'Spreadhub'
 
     def seed(self, G):
         degree_seq = sorted([(degree, vertex) for vertex, degree in G.degree()], reverse=True)

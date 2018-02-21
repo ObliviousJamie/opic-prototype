@@ -10,6 +10,7 @@ class Seeder:
             'string': self.format_string
         }
         self.return_type = return_type
+        self.name = self.__class__.__name__
 
     def format_string(self, index):
         return str(self.format_integer(index))

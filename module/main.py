@@ -95,52 +95,6 @@ def imported(import_path, start, ground_truth='', threshold=1.0, mfc=True):
         print("Average community size %s" % average_size)
 
 
-def plot_coverages(graph, seed_dict):
-    plt.xlabel("% Coverage")
-    plt.ylabel("Maximum Conductance")
-    plt.axis([0, 105, 0, 1.01])
-    print(seed_dict.keys())
-    for label, seeds in seed_dict.items():
-        print(label, len(seeds))
-        if label == 'mfc-original':
-            Coverage(graph, seeds).plot_coverage_mfc()
-        else:
-            Coverage(graph, seeds).plot_coverage(label)
-    plt.legend()
-
-
-def plot_multicoverage(import_path='', graph=''):
-    if import_path != '':
-        imports = ImportData()
-        I = imports.text_graph(import_path)
-        graph = prune_unconnected_components(I)
-    seed_dict = {}
-
-    start = choice(list(graph.nodes))
-
-    seeder = Seeder()
-
-    print("Processing MFC low seed")
-    mfc_seed_low = seeder.seed_MFC_rank(graph, start, 2.4, False, return_type="string", print_ranks=False)
-
-    # print("Processing OPIC low seed")
-    # opic_seed_low = seeder.seed(graph, start, 1.8, False, return_type="string", print_ranks=False)
-
-    print("Processing MFC ref")
-    mfc_ref = seeder.seed_MFC(graph, start, 2.28, False, return_type="string", min=True)
-
-    print("Processing spreadhub")
-    limit = len(graph.nodes) * .2
-    spreadhub = seeder.spreadhub(graph, int(limit))
-
-
-    print("Processing MFC low seed")
-    seed_dict["mfc_with_opic"] = mfc_seed_low
-    seed_dict["mfc-min-peaks"] = mfc_ref
-    seed_dict["speadhub"] = spreadhub
-
-    print("Plotting graph...")
-    plot_coverages(graph, seed_dict)
 
 
 def flip_list_dict(dictionary):
@@ -152,20 +106,6 @@ def flip_list_dict(dictionary):
     return new_dict
 
 
-def prune_unconnected_components(graph):
-    current = graph
-    # Remove self loops
-    for vertex in graph.nodes_with_selfloops():
-        graph.remove_edge(vertex, vertex)
-
-    if not nx.is_connected(graph):
-        connected_subgraphs = nx.connected_component_subgraphs(graph)
-        current = next(connected_subgraphs)
-
-        for sub_graph in connected_subgraphs:
-            if len(sub_graph.nodes) > len(current.nodes):
-                current = sub_graph
-    return current
 
 
 # Built in graphs

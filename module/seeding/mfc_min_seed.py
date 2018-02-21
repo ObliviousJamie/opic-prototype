@@ -10,6 +10,7 @@ class SeedMinMFC(ThresholdSeeder):
         super(SeedMinMFC, self).__init__(threshold=threshold, return_type=return_type)
         self.start = start
         self.s_filter = s_filter
+        self.name = 'MinPeak MFC'
 
     def seed(self, G):
         start = self.start

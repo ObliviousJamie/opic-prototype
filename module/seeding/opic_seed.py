@@ -10,6 +10,7 @@ class SeedOPIC(ThresholdSeeder):
         super(SeedOPIC, self).__init__(threshold=threshold, return_type=return_type)
         self.start = start
         self.s_filter = s_filter
+        self.name = 'OPIC'
 
     def seed(self, G):
         start = self.start
