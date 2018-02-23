@@ -1,5 +1,8 @@
 class DefaultFilter():
 
+    def __init__(self):
+        self.name = 'neighborhood_filter'
+
     def filter(self, seeds, graph):
         visited = set()
         new_seeds = []

@@ -10,7 +10,7 @@ from module.crawling.OPIC import OPIC
 
 # TODO plot size of communities found
 
-class CrawlStats:
+class CrawlCoverage:
 
     def __init__(self):
         plt.ylabel("Percentage of nodes traversed")
@@ -59,7 +59,7 @@ class CrawlStats:
         nodes.remove(start)
         visited += 1.0
 
-        communities_incremented = CrawlStats.community_removed(start, opic_communities, opic_members)
+        communities_incremented = CrawlCoverage.community_removed(start, opic_communities, opic_members)
         community_explored += communities_incremented
 
         x.append(community_explored)
@@ -73,7 +73,7 @@ class CrawlStats:
             if max_cash_node in nodes:
                 nodes.remove(max_cash_node)
 
-                communities_incremented = CrawlStats.community_removed(max_cash_node, opic_communities, opic_members)
+                communities_incremented = CrawlCoverage.community_removed(max_cash_node, opic_communities, opic_members)
                 if (communities_incremented + community_explored) > community_explored:
                     print("OPIC Explored %s percent" % ((visited / number_nodes) * 100 ))
                 community_explored += communities_incremented
@@ -103,7 +103,7 @@ class CrawlStats:
                 break
             u = queue.get()
 
-            communities_incremented = CrawlStats.community_removed(u, bfs_communities, bfs_members)
+            communities_incremented = CrawlCoverage.community_removed(u, bfs_communities, bfs_members)
             if (communities_incremented + community_explored) > community_explored:
                 print("BFS Explored %2.f percent" % ((nodes_explored / len(G.nodes)) * 100 ))
             community_explored += communities_incremented
@@ -137,7 +137,7 @@ class CrawlStats:
             u = choice(queue)
             queue.remove(u)
 
-            communities_incremented = CrawlStats.community_removed(u, random_communities, random_members)
+            communities_incremented = CrawlCoverage.community_removed(u, random_communities, random_members)
             community_explored += communities_incremented
             nodes_explored += 1.0
 
@@ -165,7 +165,7 @@ class CrawlStats:
             u = stack.pop()
             nodes_explored += 1
 
-            communities_incremented = CrawlStats.community_removed(u, dfs_communities, dfs_members)
+            communities_incremented = CrawlCoverage.community_removed(u, dfs_communities, dfs_members)
             community_explored += communities_incremented
 
             y.append(nodes_explored / len(G.nodes) * 100)
@@ -193,7 +193,7 @@ class CrawlStats:
             max_vertex = max(reference_dictionary, key=lambda i: reference_dictionary[i])
             del reference_dictionary[max_vertex]
 
-            communities_incremented = CrawlStats.community_removed(max_vertex, mfc_communities, mfc_members)
+            communities_incremented = CrawlCoverage.community_removed(max_vertex, mfc_communities, mfc_members)
 
             if (communities_incremented + community_explored) > community_explored:
                 print("MFC Explored %2.f percent" % ((nodes_explored / len(G.nodes)) * 100 ))

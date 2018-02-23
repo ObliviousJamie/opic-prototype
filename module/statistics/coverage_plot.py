@@ -7,7 +7,7 @@ from module.expansion.PPR import PPR
 import matplotlib.pyplot as plt
 
 
-class Coverage:
+class ConductancePlot:
 
     def __init__(self, graph, seeds):
         self.graph = graph
@@ -58,11 +58,11 @@ class Coverage:
         total_visited = 0
 
         for conductance, community in sorted_communities:
-            for vertex in community:
+            for _ in community:
                 conductances.append(conductance)
                 total_visited += 1
                 coverage = ( total_visited / len(self.graph.nodes)) * 100
                 coverages.append(coverage)
 
-        plt.plot(coverages, conductances, label="mfc-original", linewidth=2)
+        plt.plot(coverages, conductances, label="mfc_original", linewidth=2)
 

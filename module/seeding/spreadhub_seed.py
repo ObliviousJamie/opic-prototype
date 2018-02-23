@@ -11,8 +11,6 @@ class Spreadhub(Seeder):
     def seed(self, G):
         degree_seq = sorted([(degree, vertex) for vertex, degree in G.degree()], reverse=True)
 
-        print(degree_seq)
-
         seeds = []
         visited = set()
 

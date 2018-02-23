@@ -6,7 +6,7 @@ import subprocess
 import matplotlib.pyplot as plt
 
 
-class plotLFR:
+class PlotLFR:
 
     def __init__(self, method_thres_pair, save_loc=''):
         self.method_tuple_arr = method_thres_pair

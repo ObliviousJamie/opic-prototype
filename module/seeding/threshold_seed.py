@@ -5,7 +5,7 @@ from module.seeding.seed import Seeder
 
 class ThresholdSeeder(Seeder):
 
-    def __init__(self, threshold, return_type='integer'):
+    def __init__(self, threshold, return_type='string'):
         super(ThresholdSeeder, self).__init__(return_type)
         self.threshold = threshold
 

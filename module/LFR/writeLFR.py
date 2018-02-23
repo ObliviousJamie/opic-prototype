@@ -5,9 +5,8 @@ from module.expansion.PPR import PPR
 
 class WriteLFR:
 
-    def __init__(self, LFR_reader, seeder, write_truth=True):
+    def __init__(self, LFR_reader, write_truth=True):
         self.LFR_reader = LFR_reader
-        self.seeder = seeder
 
         prefix = "../../data/lfr/communities/"
         location = os.path.join(LFR_reader.dir, prefix)

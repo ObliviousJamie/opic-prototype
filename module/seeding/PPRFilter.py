@@ -5,7 +5,9 @@ from module.seeding.seed_filter import DefaultFilter
 class PPRFilter(DefaultFilter):
 
     def __init__(self, tol):
+        super().__init__()
         self.tol = tol
+        self.name = 'ppr_filter'
 
     def filter(self, seeds, graph):
         ppr = PPR(graph)

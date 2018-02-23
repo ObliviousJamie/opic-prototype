@@ -1,5 +1,7 @@
 import numpy
 
+from module.graph.tools.expand_seeds import SeedExpansion
+
 
 class Stats:
 
@@ -53,3 +55,12 @@ class Stats:
         # print(found_set)
         print()
         return acc
+
+    @staticmethod
+    def print_expanded(seeder, graph):
+        seeds = seeder.seed(graph)
+        expander = SeedExpansion()
+
+        discovered_communities = expander.expand(seeds, graph, tol=0.01, use_neighborhood=True)
+        for key, value in discovered_communities.items():
+            print("Seed: %s found:  %s" % (key, value))

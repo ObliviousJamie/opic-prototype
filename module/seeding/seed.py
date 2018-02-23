@@ -11,9 +11,13 @@ class Seeder:
         }
         self.return_type = return_type
         self.name = self.__class__.__name__
+        self.threshold = 0
 
     def format_string(self, index):
-        return str(self.format_integer(index))
+        try:
+            return str(self.format_integer(index))
+        except ValueError:
+            return str(index)
 
     def format_integer(self, index):
         return int(index)
