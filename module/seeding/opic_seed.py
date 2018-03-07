@@ -25,9 +25,12 @@ class SeedOPIC(ThresholdSeeder):
 
         seeds = []
         x_axis, y_axis = [], []
-        for _ in range(iterations):
+        for i in range(iterations):
             max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
             max_cash = opic.cash_current[max_val]
+
+            if(i % 3000 == 0):
+                print(f"Crawling... {(i / iterations) * 100}%")
 
             if opic.time > 0:
                 x_axis.append(max_val)
@@ -39,6 +42,7 @@ class SeedOPIC(ThresholdSeeder):
         seeds = self.pick_peaks(x_axis, y_axis, G)
 
         if self.s_filter is not None:
+            print(f"Filtering... {len(seeds)} seeds")
             seeds = self.s_filter.filter(seeds, G)
 
         return seeds

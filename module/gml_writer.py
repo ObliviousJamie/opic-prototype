@@ -3,6 +3,7 @@ import networkx as nx
 from module.LFR.readLFR import ReadLFR
 from module.expansion.PPR import PPR
 from module.expansion.neighborhood import NeighborExpand
+from module.graph.tools.graph_clean import GraphClean
 from module.graph.tools.samples import Samples
 import matplotlib.pyplot as plt
 
@@ -93,12 +94,12 @@ mix_opic = Samples().seeders_mix('opic')
 mix_min = Samples().seeders_mix('mfcmin')
 mix_mfcopic = Samples().seeders_mix('mfcopic')
 all = [mix_opic, mix_min, mix_mfcopic]
+all = [Samples().seeders('ppr')]
 
-reader = ReadLFR([1000, 5000], [0.1], overlapping_fractions=[0.1])
+reader = ReadLFR([1000], [0.1], overlapping_fractions=[0.1])
 fb = nx.read_pajek("/home/jmoreland/Downloads/graphs/fb.net")
 
 for seeders in all:
-    fb = nx.read_pajek("/home/jmoreland/Downloads/graphs/fb.net")
-    # lfr_to_gml(reader, '/home/jmoreland/Documents/PRJ/', seeders)
-    graph_to_gml(fb, '/home/jmoreland/Documents/PRJ/fb', seeders)
-#graph_to_gml(fb, '/home/jmoreland/Documents/PRJ/fb', [Spreadhub(4)])
+#    fb = nx.read_pajek("/home/jmoreland/Downloads/graphs/fb.net")
+     lfr_to_gml(reader, '/home/jmoreland/Documents/PRJ/small', seeders)
+#    graph_to_gml(fb, '/home/jmoreland/Documents/PRJ/fb', seeders)

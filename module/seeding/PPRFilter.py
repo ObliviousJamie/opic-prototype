@@ -21,8 +21,8 @@ class PPRFilter(DefaultFilter):
                 bestset = ppr.PPRRank(graph, 0.99, self.tol, [seed])
                 for v in bestset:
                     visited.add(v)
-        print("Now", len(new_seeds))
         print("Was", len(seeds))
+        print("Now", len(new_seeds))
 
         return new_seeds
 

@@ -7,13 +7,17 @@ from module.seeding.threshold_seed import ThresholdSeeder
 
 class SeedMFCOPIC(ThresholdSeeder):
 
-    def __init__(self, threshold, start=None, return_type="integer", s_filter=None):
+    def __init__(self, threshold, start=None, return_type="integer", s_filter=None, peak_filter=None):
         super(SeedMFCOPIC, self).__init__(threshold=threshold, return_type=return_type)
         self.start = start
         self.s_filter = s_filter
         self.name = 'MFCOPIC'
+        self.peak_filter = peak_filter
         if s_filter is not None:
-            self.name = f'{self.name}_{s_filter.name}'
+            if peak_filter is not None:
+                self.name = f'{self.name}_{s_filter.name}_{peak_filter.name}'
+            else:
+                self.name = f'{self.name}_{s_filter.name}_gaussian_peak'
 
     def seed(self, G):
         start = self.start
@@ -26,10 +30,15 @@ class SeedMFCOPIC(ThresholdSeeder):
         opic.visit(start)
 
         x_axis, y_axis = [], []
+        seeds = []
 
         while not mfc.empty():
             max_val = mfc.next()
             current_cash = opic.cash_current[max_val]
+
+            if self.peak_filter is not None:
+                if self.peak_filter.is_peak(current_cash):
+                    seeds.append(max_val)
 
             if opic.time > 0:
                 x_axis.append(max_val)
@@ -39,7 +48,8 @@ class SeedMFCOPIC(ThresholdSeeder):
         y_axis = np.array(y_axis)
         x_axis = np.array(x_axis)
 
-        seeds = self.pick_peaks(x_axis, y_axis, G)
+        if self.peak_filter is None:
+            seeds = self.pick_peaks(x_axis, y_axis, G)
 
         if self.s_filter is not None:
             seeds = self.s_filter.filter(seeds, G)
