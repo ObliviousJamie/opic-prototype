@@ -10,7 +10,7 @@ class WindowPeakFinder(PeakFinder):
         self.window = window
         self.queue = deque(window * [0.0], window)
         self.size = 0
-        self.name = 'wndw_peak'
+        self.name = f"wndw_peak{threshold}"
 
     def is_peak(self, value):
         sum = 0

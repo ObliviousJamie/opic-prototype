@@ -75,14 +75,20 @@ def lfr_fscores(reader, seeders):
             print()
 
 
-reader = ReadLFR([1000], [0.1], overlapping_fractions=[0.1])
+reader = ReadLFR([1000, 5000], [0.1], overlapping_fractions=[0.1])
+reader_large = ReadLFR([50000], [0.1], overlapping_fractions=[0.1])
+reader_varied = ReadLFR([1000,5000], [0.1, 0.3], overlapping_fractions=[0.1, 0.5])
 
 ppr = Samples().seeders('ppr')
 mfcopic = Samples().mfcopic_peak_variety(2.0, 0.5)
+sensitivity = Samples().custom()
 
 #lfr_fscores(reader, mfcopic)
-save = '/home/jmoreland/Documents/PRJ/sensitivity/thres'
+save = '/home/jmoreland/Documents/PRJ/sensitivity'
 plotter = PlotFscore(mfcopic)
-plotter.lfr_fscores(reader, f"{save}/threshold_variance.csv")
+#plotter.lfr_fscores(reader, f"{save}/threshold_variance_5000.csv")
+#plotter.lfr_fscores(reader_large, f"{save}/threshold_variance_50000.csv")
+plotter.lfr_fscores(reader, f"{save}/seed_select_methods.csv")
+
 
 

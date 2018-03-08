@@ -38,6 +38,7 @@ class PlotFscore:
             for seeder in self.seeders:
                 generated = f"{size}-{mix}-{overlap} {seeder.name}"
 
+                print(f"Seeding {seeder.name}")
                 seeds = seeder.seed(graph)
                 found = expander.expand(seeds, graph)
                 f1, f2 = self.fscores(real_communities, found)
@@ -54,6 +55,7 @@ class PlotFscore:
             writer = csv.DictWriter(csvfile, fieldnames= fieldnames)
             writer.writeheader()
             writer.writerow(rows_dict)
+        print('Done')
 
 
 

@@ -53,13 +53,47 @@ class Samples:
 
     def mfcopic_peak_variety(self, threshold, peak_threshold):
         f_filter_ppr = PPRFilter(0.0001)
-        basic_peak = PeakFinder(peak_threshold)
-        avg_peak = WindowPeakFinder(peak_threshold, 20)
-        seeders_mfcmin = [SeedMFCOPIC(threshold, return_type='string', s_filter=f_filter_ppr),
-                          SeedMFCOPIC(threshold, return_type='string', s_filter=f_filter_ppr, peak_filter=basic_peak),
-                          SeedMFCOPIC(threshold, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)]
+        basic_peak = PeakFinder(0.3)
+        avg_peak = WindowPeakFinder(0.3, 20)
+        seeders_mfcmin = [SeedMFCOPIC(threshold, return_type='string', s_filter=f_filter_ppr, start='1'),
+                          SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=basic_peak, start='1'),
+                          SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak, start='1')]
 
         return seeders_mfcmin
+
+    def threshold_sensitivity(self):
+        f_filter_ppr = PPRFilter(0.0001)
+        seeders = []
+        for i in range(1, 11):
+            print(f"Trying {i / 10}")
+            avg_peak = WindowPeakFinder((i /10), 20)
+            basic_peak = PeakFinder(i / 10)
+            mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak, start='1')
+            minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak, start='1')
+            mfcopicv2 = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=basic_peak, start='1')
+            minmfcv2 = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=basic_peak, start='1')
+            seeders.append(mfcopic)
+            seeders.append(minmfc)
+            seeders.append(mfcopicv2)
+            seeders.append(minmfcv2)
+
+        return seeders
+
+    def custom(self):
+        f_filter_ppr = PPRFilter(0.0001)
+        avg_peak = WindowPeakFinder(0.3, 20)
+        avg_peakv2 = WindowPeakFinder(0.8, 20)
+        mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
+        minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peakv2)
+        return [mfcopic, minmfc]
+
+
+
+
+
+
+
+
 
 
 
