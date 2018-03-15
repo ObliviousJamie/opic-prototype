@@ -37,3 +37,10 @@ I = cleaner.prune_unconnected_components(I)
 real_communities = imports.ground_truth('../data/ground-truth/eu-core')
 membership = flip_list_dict(real_communities)
 crawl.coverage_plot(I, real_communities, membership)
+
+
+
+# ./crawl_coverage.py -s 5000 -m 0.1 -o 0.1
+# ./crawl_coverage.py -d ../data.txt
+
+

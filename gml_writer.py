@@ -3,11 +3,7 @@ import networkx as nx
 from module.LFR.readLFR import ReadLFR
 from module.expansion.PPR import PPR
 from module.expansion.neighborhood import NeighborExpand
-from module.graph.tools.graph_clean import GraphClean
 from module.graph.tools.samples import Samples
-import matplotlib.pyplot as plt
-
-from module.seeding.spreadhub_seed import Spreadhub
 
 
 def lfr_to_gml(reader, save_location, seeders):
@@ -32,11 +28,7 @@ def lfr_to_gml(reader, save_location, seeders):
             nx.write_gml(graph, loc)
 
 
-def ground_to_gml():
-    pass
-
-
-def graph_to_gml(graph, save_location, seeders):
+def graph_to_gml(graph, save_location, seeders, real_communities=None):
     clean_graph = graph.to_undirected()
     for seeder in seeders:
         graph = clean_graph.to_undirected()
@@ -46,9 +38,13 @@ def graph_to_gml(graph, save_location, seeders):
             graph.node[vertex]['smalldiscover'] = min(membership)
             graph.node[vertex]['foverlap'] = len(membership)
 
+        if real_communities is not None:
+            for membership, vertices in real_communities.items():
+                for vertex in vertices:
+                    graph.node[vertex]['community'] = membership
+
         loc = "%s_%s.gml" % (save_location, seeder.name)
         nx.write_gml(graph, loc)
-
 
 
 def find_communities(seeder, graph):
@@ -100,6 +96,13 @@ reader = ReadLFR([1000], [0.1], overlapping_fractions=[0.1])
 fb = nx.read_pajek("/home/jmoreland/Downloads/graphs/fb.net")
 
 for seeders in all:
-#    fb = nx.read_pajek("/home/jmoreland/Downloads/graphs/fb.net")
-     lfr_to_gml(reader, '/home/jmoreland/Documents/PRJ/small', seeders)
+    #    fb = nx.read_pajek("/home/jmoreland/Downloads/graphs/fb.net")
+    lfr_to_gml(reader, '/home/jmoreland/Documents/PRJ/small', seeders)
 #    graph_to_gml(fb, '/home/jmoreland/Documents/PRJ/fb', seeders)
+
+
+
+# ./gml_writer.py -s 5000 -m 0.1 -o 0.1 -c standard
+# ./gml_writer.py -d ../data.txt -t ../truth.txt -c standard
+
+# -c -- standard, all, mfcopic
