@@ -1,6 +1,5 @@
 from module.graph.tools.expand_seeds import SeedExpansion
 from module.graph.tools.write_csv import WriteCSV
-from module.imports.importData import ImportData
 from module.statistics.fscore import FScore
 
 
@@ -46,17 +45,15 @@ class FscoreCalculator:
 
         return rows
 
-    def imported_fscores(self, graph_loc, truth_loc, label):
-        import_data = ImportData()
-
-        graph = import_data.text_graph(graph_loc)
-        communities = import_data.ground_truth_multiline(truth_loc)
-
+    def imported_fscores(self, graph, communities, label):
         rows = {}
         for seeder in self.seeders:
             header_label = f"{label} {seeder.name}"
+            print(f"Seeding {seeder.name}...")
             seeds = seeder.seed(graph)
+            print(f"Expanding seeds...")
             found = self.expander.expand(seeds, graph)
+            print(f"Computing fscores...")
             f1, f2 = self.fscores(communities, found)
             rows[f"f1 {header_label}"] = f1
             rows[f"f2 {header_label}"] = f2

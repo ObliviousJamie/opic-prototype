@@ -1,4 +1,4 @@
-import networkx as nx
+import copy
 
 from module.LFR.readLFR import ReadLFR
 from module.graph.tools.samples import Samples
@@ -8,6 +8,7 @@ from module.imports.importData import ImportData
 class Options:
 
     def __init__(self, arguments):
+        arguments = copy.copy(arguments)
         self.argv = arguments
         self.options = None
 
@@ -21,8 +22,28 @@ class Options:
                     data = self.argv.pop(0)
                     options[argument[1]].append(data)
 
+        if not options:
+            self.print_help()
+            exit()
+
+        if 'h' in options:
+            self.print_help()
+            exit()
+
         self.options = options
         return options
+
+    @staticmethod
+    def print_help():
+        blank = '                 '
+        print("Options:")
+        print(f"-h{blank}Print help")
+        print(f"-s{blank}Benchmark graph size")
+        print(f"-m{blank}Benchmark graph mixing parameter")
+        print(f"-o{blank}Benchmark graph overlap percentage")
+        print(f"-c{blank}Methods to use: standard all mfcopic")
+        print(f"-d{blank}Location of real graph in edgelist format")
+        print(f"-t{blank}Location of ground truth")
 
     @staticmethod
     def is_lfr(opts):
@@ -40,6 +61,16 @@ class Options:
             print('Either graph file was not specified or lfr size, mix and overlap parameters were not specified.')
             exit()
 
+    @staticmethod
+    def find_seeder(seeder_group):
+        print(f'Looking for {seeder_group}')
+        samples = Samples()
+        return {
+            'standard' : samples.standard(),
+            'all' : samples.all(),
+            'mfcopic' : samples.mfcopic()
+        }.get(seeder_group[0], samples.mfcopic())
+
     def generate_reader(self):
         if self.options is None:
             self.gather_opts()
@@ -55,24 +86,22 @@ class Options:
             return None
 
     def select_seeders(self):
-        samples = Samples()
+        if self.options is None:
+            self.gather_opts()
 
-        if 'c' in self.options:
-            seeders = samples.threshold_sensitivity()
-        else:
-            seeders = samples.threshold_sensitivity()
+        seeders = self.find_seeder(self.options.get('c', 'mfcopic'))
 
         return seeders
 
-    def import_real(self, need_truth=False):
-        data_imports = ImportData()
+    def import_real(self, call_location, need_truth=False):
+        data_imports = ImportData(call_location)
         if self.options is None:
             self.gather_opts()
         if 'd' not in self.options:
             print('No data given')
             exit()
 
-        data = self.options['d']
+        data = self.options['d'][0]
         graph = data_imports.text_graph(data)
         truth_dict = None
 
@@ -80,7 +109,7 @@ class Options:
             if 't' not in self.options:
                 print('No ground truth given')
                 exit()
-            truth = self.options['t']
+            truth = self.options['t'][0]
             truth_dict = data_imports.ground_truth_multiline(truth)
 
         return graph, truth_dict

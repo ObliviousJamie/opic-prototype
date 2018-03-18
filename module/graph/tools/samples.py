@@ -79,13 +79,30 @@ class Samples:
 
         return seeders
 
-    def custom(self):
+    def standard(self):
         f_filter_ppr = PPRFilter(0.0001)
         avg_peak = WindowPeakFinder(0.3, 20)
         avg_peakv2 = WindowPeakFinder(0.8, 20)
         mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
         minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peakv2)
         return [mfcopic, minmfc]
+
+    def mfcopic(self):
+        f_filter_ppr = PPRFilter(0.0001)
+        avg_peak = WindowPeakFinder(0.3, 20)
+        mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
+        return [mfcopic]
+
+    def all(self):
+        f_filter_ppr = PPRFilter(0.0001)
+        avg_peak = WindowPeakFinder(0.3, 20)
+        avg_peakv2 = WindowPeakFinder(0.8, 20)
+        mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
+        minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peakv2)
+        opic = SeedOPIC(2.0, return_type='string', s_filter=f_filter_ppr)
+        return [mfcopic, minmfc, opic]
+
+
 
 
 

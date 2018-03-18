@@ -4,8 +4,8 @@ import networkx as nx
 
 class ImportData:
 
-    def __init__(self):
-        self.dir = os.path.dirname(__file__)
+    def __init__(self, call_location):
+        self.dir = call_location
 
     def ground_truth(self, filename):
         location = os.path.join(self.dir, filename)
@@ -36,6 +36,7 @@ class ImportData:
         return communities
 
     def text_graph(self, file_location):
+        print(file_location)
         location = os.path.join(self.dir, file_location)
         fh = open(location, 'rb')
         G = nx.read_edgelist(fh)
