@@ -1,46 +1,65 @@
-from module.LFR.readLFR import ReadLFR
+import matplotlib.pyplot as plt
 from module.graph.tools.graph_clean import GraphClean
-from module.imports.importData import ImportData
+from module.import_options import Options
 from module.statistics.crawl_coverage_plot import CrawlCoverage
 
 
-def flip_list_dict(dictionary):
-    new_dict = {}
-    for key, value_list in dictionary.items():
-        for item in value_list:
-            new_dict.setdefault(item, list())
-            new_dict[item].append(key)
-    return new_dict
+class CrawlCoverageManager:
 
+    def __init__(self, crawl_coverage, save_base):
+        self.crawl_coverage = crawl_coverage
+        self.save_base = save_base
 
-reader = ReadLFR([1000], [0.1, 0.3], overlapping_fractions=[0.1, 0.2, 0.3, 0.4, 0.5])
-lfr_dict = reader.read()
-for key, value in lfr_dict.items():
-    reverse = {}
-    graph, community = value
-    for vertex, members in community.items():
-        for community_key in members:
-            reverse.setdefault(community_key, [])
-            reverse[community_key].append(vertex)
-    print()
-    print()
-    print(key)
-    crawl = CrawlCoverage()
-    crawl.coverage_plot(graph, reverse, community)
+    def coverage_lfr(self, reader):
+        lfr_dict = reader.read()
+        for key, value in lfr_dict.items():
+            graph, community = value
+            flip_community = self.flip_list_dict(community)
+            self.crawl_coverage.coverage_plot(graph, flip_community, community)
+            size, mix, overlap = key
+            plt.savefig(f"{self.save_base}_{size}_{mix}_{overlap}.png")
+            plt.close()
 
-crawl = CrawlCoverage()
-imports = ImportData()
-I = imports.text_graph('../data/edgelist/eu-core')
-cleaner = GraphClean()
-I = cleaner.prune_unconnected_components(I)
+    def coverage_real(self, graph, communities):
+        cleaner = GraphClean()
+        cleaner.prune_unconnected_components(graph)
+        flip_community = self.flip_list_dict(communities)
+        self.crawl_coverage.coverage_plot(graph, flip_community, communities)
+        plt.savefig(f"{self.save_base}_custom_graph.png")
+        plt.show()
+        plt.close()
 
-real_communities = imports.ground_truth('../data/ground-truth/eu-core')
-membership = flip_list_dict(real_communities)
-crawl.coverage_plot(I, real_communities, membership)
+    @staticmethod
+    def flip_list_dict(dictionary):
+        new_dict = {}
+        for key, value_list in dictionary.items():
+            for item in value_list:
+                new_dict.setdefault(item, list())
+                new_dict[item].append(key)
+        return new_dict
 
+if __name__ == '__main__':
+    from sys import argv
+    import os
+    import datetime
+
+    option_import = Options(argv)
+    seeders = option_import.select_seeders()
+
+    directory = os.getcwd()
+    date = datetime.datetime.now().strftime("%y-%m-%H%S")
+    save_name = f"{directory}/crawl_coverage_{date}"
+
+    reader = option_import.generate_reader()
+    crawl_manager = CrawlCoverageManager(CrawlCoverage(), save_name)
+    if reader is not None:
+        crawl_manager.coverage_lfr(reader)
+    else:
+        graph, communities = option_import.import_real(directory, need_truth=True)
+        print("Graph and community imported")
+        crawl_manager.coverage_real(graph, communities)
 
 
 # ./crawl_coverage.py -s 5000 -m 0.1 -o 0.1
 # ./crawl_coverage.py -d ../data.txt
-
 

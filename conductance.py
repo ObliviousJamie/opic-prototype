@@ -60,14 +60,14 @@ if __name__ == '__main__':
     date = datetime.datetime.now().strftime("%y-%m-%H%S")
     save_name = f"{directory}/conductance_{date}"
 
-    conductanceMan = ConductancePlotManager(seeders, save_name)
+    conductance_manager = ConductancePlotManager(seeders, save_name)
 
     reader = option_import.generate_reader()
     if reader is not None:
-        conductanceMan.plot_with_lfr(reader)
+        conductance_manager.plot_with_lfr(reader)
     else:
         graph, _ = option_import.import_real(directory)
         print("Graph and community imported")
         save_name = f"{directory}/conductance_{date}_real.png"
-        conductanceMan.plot_multicoverage(graph, save_name)
+        conductance_manager.plot_multicoverage(graph, save_name)
 
