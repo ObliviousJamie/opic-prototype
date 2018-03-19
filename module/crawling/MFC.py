@@ -11,12 +11,22 @@ class MFC:
         self.x, self.y = [], []
         self.i = 0
 
+        self.last_max = 2
+        self.local_max = (-1, 'None')
+
     def next(self):
         if not self.reference_dictionary.keys():
             return -1
         else:
-            max_vertex = max(self.reference_dictionary, key=lambda i: self.reference_dictionary[i])
+            if self.local_max[0] > self.last_max:
+                max_vertex = self.local_max[1]
+            else:
+                max_vertex = max(self.reference_dictionary, key=lambda i: self.reference_dictionary[i])
+
             max_ref = self.reference_dictionary[max_vertex]
+
+            self.last_max = max_ref
+            self.local_max = (-1, 'None')
             del self.reference_dictionary[max_vertex]
 
             for vertex in self.G[max_vertex]:
@@ -25,6 +35,11 @@ class MFC:
                 if vertex in self.visited and vertex in self.reference_dictionary:
                     updated_ref = (self.reference_dictionary[vertex] * degree) + 1.0
                     self.reference_dictionary[vertex] = updated_ref / degree
+
+                    max_val = self.reference_dictionary[vertex]
+                    if max_val >= self.last_max and max_val > self.local_max[0]:
+                        self.local_max = (max_val, vertex)
+
                 # Else give starting reference
                 elif vertex not in self.visited:
                     ref_score = 1.0 / degree
@@ -36,6 +51,7 @@ class MFC:
             self.i += 1
 
             return max_vertex
+
 
     def empty(self):
         return not self.reference_dictionary.keys()

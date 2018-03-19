@@ -27,22 +27,34 @@ class CrawlCoverage:
         random_start = choice(list(graph.nodes))
         print("Start: %s" % random_start)
 
-        start_time = time.time()
 
         bfs = copy.deepcopy(communities)
         opic = copy.deepcopy(communities)
         dfs = copy.deepcopy(communities)
         mfc = copy.deepcopy(communities)
-        random = copy.deepcopy(communities)
-        #self.random_walk(graph, random, memberships.copy(), random_start)
+
+        start_time = time.time()
         self.OPIC(graph, opic, memberships.copy(), random_start)
+        self.print_time(start_time)
+
+        start_time = time.time()
         self.MFC(graph, mfc, memberships.copy(), random_start)
+        self.print_time(start_time)
+
+        start_time = time.time()
         self.BFS(graph, bfs, memberships.copy(), random_start)
+        self.print_time(start_time)
+
+        start_time = time.time()
         self.DFS(graph, dfs, memberships.copy(), random_start)
-        end_time = time.time()
-        print("Total time %s" % (end_time - start_time))
+        self.print_time(start_time)
         plt.legend()
-        plt.show()
+
+    def print_time(self, start_time):
+        end_time = time.time()
+        print()
+        print("Total time %s" % (end_time - start_time))
+        print()
 
     @staticmethod
     def OPIC(G, opic_communities, opic_members, start):
@@ -90,10 +102,10 @@ class CrawlCoverage:
         community_explored, nodes_explored = 0, 0
 
         queue = Queue()
-        visited = []
+        visited = set()
         # Add first node
         queue.put(start)
-        visited.append(start)
+        visited.add(start)
 
         while queue.not_empty:
             if len(visited) > len(G):
@@ -114,7 +126,7 @@ class CrawlCoverage:
             for vertex in G[u]:
                 if vertex not in visited:
                     queue.put(vertex)
-                    visited.append(vertex)
+                    visited.add(vertex)
 
         plt.plot(x, y, linewidth=2, label="BFS")
 
@@ -184,13 +196,21 @@ class CrawlCoverage:
         community_explored, nodes_explored = 0, 0
         reference_dictionary = {}
 
-        visited = []
+        visited = set()
         # Add first node
         reference_dictionary[start] = 0
-        visited.append(start)
+        visited.add(start)
+        local_max = (-1, '-1')
+        last_max = 2
 
         while reference_dictionary.keys():
-            max_vertex = max(reference_dictionary, key=lambda i: reference_dictionary[i])
+            if local_max[0] > last_max:
+                _, max_vertex = local_max
+            else:
+                max_vertex = max(reference_dictionary, key=lambda i: reference_dictionary[i])
+
+            last_max = reference_dictionary[max_vertex]
+
             del reference_dictionary[max_vertex]
 
             communities_incremented = CrawlCoverage.community_removed(max_vertex, mfc_communities, mfc_members)
@@ -204,17 +224,23 @@ class CrawlCoverage:
             y.append((nodes_explored / len(G.nodes)) * 100)
             x.append(community_explored)
 
+            visited.add(max_vertex)
+            local_max = (-1, '0')
             for vertex in G[max_vertex]:
                 degree = G.degree(vertex)
                 # Update reference if it exists and has not been explored
                 if vertex in visited and vertex in reference_dictionary:
                     updated_ref = (reference_dictionary[vertex] * degree) + 1.0
                     reference_dictionary[vertex] = updated_ref / degree
+
+                    if reference_dictionary[vertex] >= last_max and reference_dictionary[vertex] > local_max[0]:
+                        local_max = (reference_dictionary[vertex], vertex)
+
                 # Else give starting reference
                 elif vertex not in visited:
                     ref_score = 1.0 / degree
                     reference_dictionary[vertex] = ref_score
-                    visited.append(vertex)
+                    visited.add(vertex)
 
         plt.plot(x, y, linewidth=2, label="MFC")
 
