@@ -16,17 +16,30 @@ class CrawlCoverageManager:
             graph, community = value
             flip_community = self.flip_list_dict(community)
             self.crawl_coverage.coverage_plot(graph, flip_community, community)
-            size, mix, overlap = key
-            plt.savefig(f"{self.save_base}_{size}_{mix}_{overlap}.png")
+
+            plt.legend()
+
+            if len(key) is 2:
+                size, mix = key
+                plt.title(f"Benchmark network (mix: {mix} size: {size} overlap: None)")
+                plt.savefig(f"{self.save_base}_{size}_{mix}.png")
+            else:
+                size, mix, overlap = key
+                plt.title(f"Benchmark network (mix: {mix} size: {size} overlap: {overlap})")
+                plt.savefig(f"{self.save_base}_{size}_{mix}_{overlap}.png")
+
             plt.close()
 
     def coverage_real(self, graph, communities):
+        name = "custom name"
         cleaner = GraphClean()
         cleaner.prune_unconnected_components(graph)
         flip_community = self.flip_list_dict(communities)
-        self.crawl_coverage.coverage_plot(graph, flip_community, communities)
-        plt.savefig(f"{self.save_base}_custom_graph.png")
-        plt.show()
+        self.crawl_coverage.coverage_plot(graph, communities, flip_community)
+        plt.legend()
+        #plt.savefig(f"{self.save_base}_custom_graph.png")
+        plt.title(f"{name}")
+        plt.savefig(f"{self.save_base}_{name}.png")
         plt.close()
 
     @staticmethod

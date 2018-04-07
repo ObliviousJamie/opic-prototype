@@ -1,6 +1,7 @@
 import os
 
 from module.expansion.PPR import PPR
+from module.graph.tools.expand_seeds import SeedExpansion
 
 
 class WriteLFR:
@@ -46,6 +47,7 @@ class WriteLFR:
         lfr_graphs = self.LFR_reader.read()
         communities = {}
         memberships = []
+        expander = SeedExpansion()
 
         for key, value in lfr_graphs.items():
             graph, membership = value
@@ -56,12 +58,13 @@ class WriteLFR:
 
             ppr = PPR(graph)
             communities[key] = []
+            #bestsets = expander.expand(seeds=seeds, G=graph)
+            #communities[key] = bestsets
             for seed in seeds:
                 seed = graph[seed]
-                bestset = ppr.PPRRank(graph, 0.99, 0.001, seed)
+                bestset = ppr.PPRRank(graph, 0.99, 0.0001, seed)
                 communities[key].append(bestset)
 
             self.save(truth=membership, result=communities, key=key, threshold=seeder.threshold, method=seeder.name)
 
         return communities, memberships
-

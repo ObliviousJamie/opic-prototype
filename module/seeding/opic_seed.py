@@ -10,9 +10,9 @@ class SeedOPIC(ThresholdSeeder):
         super(SeedOPIC, self).__init__(threshold=threshold, return_type=return_type)
         self.start = start
         self.s_filter = s_filter
-        self.name = 'OPIC'
+        self.name = f'OPIC{threshold}'
         if s_filter is not None:
-            self.name = f'{self.name}_{s_filter.name}'
+            self.name = f'{self.name}_{s_filter.name}_gaussian_peak{threshold}'
 
     def seed(self, G):
         start = self.start

@@ -3,7 +3,7 @@ class PeakFinder():
     def __init__(self, threshold):
         self.threshold = threshold
         self.last = 0
-        self.name = 'nrm_peak'
+        self.name = f'nrm_peak{threshold}'
 
     def is_peak(self, value):
         difference = value - self.last

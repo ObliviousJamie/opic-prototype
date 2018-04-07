@@ -11,12 +11,12 @@ class SeedMinMFC(ThresholdSeeder):
         self.start = start
         self.s_filter = s_filter
         self.peak_filter = peak_filter
-        self.name = 'MinPeakMFC'
+        self.name = f'MinPeakMFC{threshold}'
         if s_filter is not None:
             if peak_filter is not None:
                 self.name = f'{self.name}_{s_filter.name}_{peak_filter.name}'
             else:
-                self.name = f'{self.name}_{s_filter.name}_gaussian_peak'
+                self.name = f'{self.name}_{s_filter.name}_gaussian_peak{threshold}'
 
     def seed(self, G):
         start = self.start

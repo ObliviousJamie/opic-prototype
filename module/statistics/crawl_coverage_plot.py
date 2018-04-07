@@ -13,8 +13,7 @@ from module.crawling.OPIC import OPIC
 class CrawlCoverage:
 
     def __init__(self):
-        plt.ylabel("Percentage of nodes traversed")
-        plt.xlabel("Communities fully traversed")
+        pass
 
     def coverage_plot(self, graph, communities, memberships):
         number_communities = len(communities.keys())
@@ -34,7 +33,11 @@ class CrawlCoverage:
         mfc = copy.deepcopy(communities)
 
         start_time = time.time()
-        self.OPIC(graph, opic, memberships.copy(), random_start)
+        self.BFS(graph, bfs, memberships.copy(), random_start)
+        self.print_time(start_time)
+
+        start_time = time.time()
+        self.DFS(graph, dfs, memberships.copy(), random_start)
         self.print_time(start_time)
 
         start_time = time.time()
@@ -42,13 +45,11 @@ class CrawlCoverage:
         self.print_time(start_time)
 
         start_time = time.time()
-        self.BFS(graph, bfs, memberships.copy(), random_start)
+        self.OPIC(graph, opic, memberships.copy(), random_start)
         self.print_time(start_time)
 
-        start_time = time.time()
-        self.DFS(graph, dfs, memberships.copy(), random_start)
-        self.print_time(start_time)
-        plt.legend()
+        plt.ylabel("Percentage of nodes traversed")
+        plt.xlabel("Communities fully traversed")
 
     def print_time(self, start_time):
         end_time = time.time()
@@ -108,7 +109,7 @@ class CrawlCoverage:
         visited.add(start)
 
         while queue.not_empty:
-            if len(visited) > len(G):
+            if len(visited) > len(G.nodes):
                 print("Something went wrong")
                 break
             if queue.empty():
@@ -247,6 +248,8 @@ class CrawlCoverage:
     @staticmethod
     def community_removed(vertex, communities, members):
         number_empty = 0
+        vertex = str(vertex)
+
 
         for community in members.get(vertex, []):
             # TODO May have already been removed

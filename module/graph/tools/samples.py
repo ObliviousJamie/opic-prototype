@@ -79,6 +79,98 @@ class Samples:
 
         return seeders
 
+    def every_minmfc(self):
+        seeders = []
+        f_filter_ppr = PPRFilter(0.0001)
+        f_filter_neighbor = DefaultFilter()
+
+        for i in range(1, 11):
+            avg_peak = WindowPeakFinder((i /10), 20)
+            basic_peak = PeakFinder(i / 10)
+
+            avg_ppr = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak, start='1')
+            basic_ppr = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=basic_peak, start='1')
+
+            avg_neigh = SeedMinMFC(0, return_type='string', s_filter=f_filter_neighbor, peak_filter=avg_peak, start='1')
+            basic_neigh = SeedMinMFC(0, return_type='string', s_filter=f_filter_neighbor, peak_filter=basic_peak, start='1')
+
+            basic = SeedMinMFC(0, return_type='string', peak_filter=basic_peak, start='1')
+            avg = SeedMinMFC(0, return_type='string', peak_filter=avg_peak, start='1')
+
+            seeders.append(basic)
+            seeders.append(avg)
+
+            seeders.append(avg_ppr)
+            seeders.append(basic_ppr)
+            seeders.append(avg_neigh)
+            seeders.append(basic_neigh)
+
+        for i in range(1, 28):
+            adjusted = i /10
+            plain = SeedMinMFC(adjusted, return_type='string', start='1')
+            neigh = SeedMinMFC(adjusted, return_type='string', s_filter=f_filter_ppr, start='1')
+            ppr = SeedMinMFC(adjusted, return_type='string', s_filter=f_filter_neighbor, start='1')
+            seeders.append(plain)
+            seeders.append(neigh)
+            seeders.append(ppr)
+
+        return seeders
+
+
+    def every_opic(self):
+        seeders = []
+        f_filter_ppr = PPRFilter(0.0001)
+        f_filter_neighbor = DefaultFilter()
+
+        for i in range(0, 28):
+            adjusted = i /10
+            plain = SeedOPIC(adjusted, return_type='string', start='1')
+            neigh = SeedOPIC(adjusted, return_type='string', s_filter=f_filter_ppr, start='1')
+            ppr = SeedOPIC(adjusted, return_type='string', s_filter=f_filter_neighbor, start='1')
+            seeders.append(plain)
+            seeders.append(neigh)
+            seeders.append(ppr)
+
+        return seeders
+
+
+    def every_mfcopic(self):
+        seeders = []
+        f_filter_ppr = PPRFilter(0.0001)
+        f_filter_neighbor = DefaultFilter()
+
+        for i in range(1, 11):
+            avg_peak = WindowPeakFinder((i /10), 20)
+            basic_peak = PeakFinder(i / 10)
+
+            avg_ppr = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak, start='1')
+            basic_ppr = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=basic_peak, start='1')
+
+            avg_neigh = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_neighbor, peak_filter=avg_peak, start='1')
+            basic_neigh = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_neighbor, peak_filter=basic_peak, start='1')
+
+            basic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak, start='1')
+            avg = SeedMFCOPIC(0, return_type='string', peak_filter=avg_peak, start='1')
+
+            seeders.append(basic)
+            seeders.append(avg)
+            seeders.append(avg_ppr)
+            seeders.append(basic_ppr)
+            seeders.append(avg_neigh)
+            seeders.append(basic_neigh)
+
+        for i in range(0, 28):
+            adjusted = i /10
+            plain = SeedMFCOPIC(adjusted, return_type='string', start='1')
+            neigh = SeedMFCOPIC(adjusted, return_type='string', s_filter=f_filter_ppr, start='1')
+            ppr = SeedMFCOPIC(adjusted, return_type='string', s_filter=f_filter_neighbor, start='1')
+            seeders.append(plain)
+            seeders.append(neigh)
+            seeders.append(ppr)
+
+        return seeders
+
+
     def standard(self):
         f_filter_ppr = PPRFilter(0.0001)
         avg_peak = WindowPeakFinder(0.3, 20)

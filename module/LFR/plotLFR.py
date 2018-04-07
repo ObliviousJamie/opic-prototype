@@ -3,6 +3,8 @@ import time
 import os
 
 import subprocess
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 
 
@@ -16,7 +18,7 @@ class PlotLFR:
         self.save_loc = save_loc
 
     def plot(self, sizes, mixes, overlaps):
-
+        avg_dict = {}
         for size in sizes:
             for mix in mixes:
                 plt.title("Size: %s, Mixing factor: %s" % (size, mix))
@@ -26,6 +28,11 @@ class PlotLFR:
 
                 for method, threshold in self.method_tuple_arr:
                     x, y = self.read_NMIs(method, threshold, size, mix, overlaps)
+
+                    avg_dict.setdefault(method,[])
+                    avg = sum(y) / len(y)
+                    avg_dict[method].append(avg)
+
                     plt.plot(x, y, label=method)
                 plt.legend()
                 if self.save_loc != '':
@@ -34,6 +41,23 @@ class PlotLFR:
                     print("Saving plot at %s" % save)
                     plt.savefig(save)
                 plt.close()
+
+        overall = []
+        for k, v in avg_dict.items():
+            overall_avg = sum(v) / len(v)
+            overall.append((overall_avg, k))
+
+        jsizes = "-".join(map(str,sizes))
+        jmixes = "-".join(map(str, mixes))
+        jover = "-".join(map(str,overlaps))
+        file = open(f"{jsizes}_{jmixes}_{jover}.txt","w")
+        for avg, name in sorted(overall):
+            line = f"{name} with average NMI of {avg}"
+            print(line, file=file)
+            #file.write(line)
+        file.close()
+
+
 
     def read_NMIs(self, method, threshold, size, mix, overlaps):
         score_arr = []
@@ -51,13 +75,28 @@ class PlotLFR:
         result_file = "%s%s_%s_%s_%s_t%s_result.txt" % (self.community_prefix, size, mix, overlap, method, threshold)
         arg_string = "%s %s %s" % (self.program_prefix, true_file, result_file)
 
-        out = subprocess.run(arg_string, check=True, shell=True, stdout=subprocess.PIPE)
+        nmi = 0
 
-        decoded_array = out.stdout \
-            .decode("utf-8") \
-            .replace('\t', '\n') \
-            .split('\n')
+        results = Path(result_file)
+        if not results.is_file():
+            print(f"WARNING: Could not find {result_file}")
+        else:
+            if os.path.getsize(result_file) == 0:
+                print(f"WARNING: No discovered communities in {result_file}")
+            else:
+                #print("FOUND FILE")
 
-        nmi = decoded_array[4]
+                out = subprocess.run(arg_string, check=True, shell=True, stdout=subprocess.PIPE)
+
+                decoded_array = out.stdout \
+                .decode("utf-8") \
+                .replace('\t', '\n') \
+                .split('\n')
+
+                nmi = decoded_array[4]
+                print()
+                print(f"{method} with NMI: {nmi}")
+                print(f"{method} with Adjusted NMI: {decoded_array[1]}")
+                print()
 
         return nmi

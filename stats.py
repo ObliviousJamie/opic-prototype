@@ -1,3 +1,4 @@
+from module.graph.tools.samples import Samples
 from module.import_options import Options
 from module.statistics.fscorecalculator import FscoreCalculator
 
@@ -7,11 +8,17 @@ if __name__ == '__main__':
     import datetime
 
     option_import = Options(argv)
-    seeders = option_import.select_seeders()
+    #TODO change back
+    #seeders = option_import.select_seeders()
+    samps = Samples()
+    #seeders = samps.every_mfcopic()
+    seeders = samps.every_minmfc()
+    #seeders = samps.every_opic()
+
 
     directory = os.getcwd()
     date = datetime.datetime.now().strftime("%y-%m-%H%S")
-    save_name = f"{directory}/f_scores{date}.csv"
+    save_name = f"{directory}/avgf_scores{date}_minmfc1000.csv"
 
     calculator = FscoreCalculator(seeders, save_name)
 
