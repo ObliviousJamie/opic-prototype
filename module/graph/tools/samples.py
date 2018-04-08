@@ -186,12 +186,16 @@ class Samples:
         return [mfcopic]
 
     def all(self):
+        basic_peak = PeakFinder(0.1)
         f_filter_ppr = PPRFilter(0.0001)
         avg_peak = WindowPeakFinder(0.3, 20)
         avg_peakv2 = WindowPeakFinder(0.8, 20)
-        mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
-        minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peakv2)
-        opic = SeedOPIC(2.0, return_type='string', s_filter=f_filter_ppr)
+        #mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
+        #minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peakv2)
+        #opic = SeedOPIC(2.0, return_type='string', s_filter=f_filter_ppr)
+        mfcopic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak)
+        minmfc = SeedMinMFC(1.0, return_type='string')
+        opic = SeedOPIC(0.7, return_type='string', s_filter=f_filter_ppr)
         return [mfcopic, minmfc, opic]
 
 

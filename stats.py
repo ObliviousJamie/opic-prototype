@@ -11,14 +11,18 @@ if __name__ == '__main__':
     #TODO change back
     #seeders = option_import.select_seeders()
     samps = Samples()
-    #seeders = samps.every_mfcopic()
-    seeders = samps.every_minmfc()
-    #seeders = samps.every_opic()
+    seeders1 = samps.every_mfcopic()
+    seeders2 = samps.every_minmfc()
+    seeders3 = samps.every_opic()
+    seeders = []
+    seeders.extend(seeders1)
+    #seeders.extend(seeders2)
+    #seeders.extend(seeders2)
 
 
     directory = os.getcwd()
     date = datetime.datetime.now().strftime("%y-%m-%H%S")
-    save_name = f"{directory}/avgf_scores{date}_minmfc1000.csv"
+    save_name = f"{directory}/avgf_scores{date}_all.csv"
 
     calculator = FscoreCalculator(seeders, save_name)
 
