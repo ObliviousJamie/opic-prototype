@@ -6,17 +6,14 @@ from module.seeding.threshold_seed import ThresholdSeeder
 
 class SeedMinMFC(ThresholdSeeder):
 
-    def __init__(self, threshold, start=None, return_type="integer", s_filter=None, peak_filter=None):
-        super(SeedMinMFC, self).__init__(threshold=threshold, return_type=return_type)
+    def __init__(self, threshold, label=None, start=None, return_type="integer", s_filter=None, peak_filter=None):
+        super(SeedMinMFC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter, peak_filter=peak_filter)
         self.start = start
-        self.s_filter = s_filter
-        self.peak_filter = peak_filter
-        self.name = f'MinPeakMFC{threshold}'
-        if s_filter is not None:
-            if peak_filter is not None:
-                self.name = f'{self.name}_{s_filter.name}_{peak_filter.name}'
-            else:
-                self.name = f'{self.name}_{s_filter.name}_gaussian_peak{threshold}'
+
+        if label is None:
+            self._gen_name("MinPeakMFC")
+        else:
+            self.name = label
 
     def seed(self, G):
         start = self.start

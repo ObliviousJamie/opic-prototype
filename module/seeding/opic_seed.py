@@ -6,13 +6,14 @@ from module.seeding.threshold_seed import ThresholdSeeder
 
 class SeedOPIC(ThresholdSeeder):
 
-    def __init__(self, threshold, start=None, return_type="integer", s_filter=None):
-        super(SeedOPIC, self).__init__(threshold=threshold, return_type=return_type)
+    def __init__(self, threshold, label=None, start=None, return_type="integer", s_filter=None):
+        super(SeedOPIC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter)
         self.start = start
-        self.s_filter = s_filter
-        self.name = f'OPIC{threshold}'
-        if s_filter is not None:
-            self.name = f'{self.name}_{s_filter.name}_gaussian_peak{threshold}'
+
+        if label is None:
+            self._gen_name("OPIC")
+        else:
+            self.name = label
 
     def seed(self, G):
         start = self.start
@@ -29,7 +30,7 @@ class SeedOPIC(ThresholdSeeder):
             max_val = max(opic.cash_current, key=lambda i: opic.cash_current[i])
             max_cash = opic.cash_current[max_val]
 
-            if(i % 3000 == 0):
+            if (i % 3000 == 0):
                 print(f"Crawling... {(i / iterations) * 100}%")
 
             if opic.time > 0:
@@ -46,4 +47,3 @@ class SeedOPIC(ThresholdSeeder):
             seeds = self.s_filter.filter(seeds, G)
 
         return seeds
-
