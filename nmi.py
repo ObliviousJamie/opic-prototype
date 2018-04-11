@@ -1,7 +1,7 @@
 from module.LFR.plotLFR import PlotLFR
 from module.LFR.readLFR import ReadLFR
 from module.LFR.writeLFR import WriteLFR
-from module.expansion.PPR import PPR
+from module.expansion.ppr import PPR
 from module.import_options import Options
 from module.seeding.spreadhub_seed import Spreadhub
 
@@ -37,12 +37,12 @@ class NMIManager:
             key = ('','','')
             communities[key] = []
 
-            ppr = PPR(graph)
+            ppr = PPR()
             seeds = seeder.seed(graph)
 
             for seed in seeds:
                 seed = graph[seed]
-                bestset = ppr.PPRRank(graph, 0.99, 0.0001, seed)
+                bestset = ppr.ppr_rank(graph, seed)
                 communities[key].append(bestset)
 
             method = f'custom{len(graph)}_{seeder.name}'

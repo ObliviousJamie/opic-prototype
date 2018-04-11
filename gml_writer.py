@@ -1,7 +1,7 @@
 import networkx as nx
 
 from module.LFR.readLFR import ReadLFR
-from module.expansion.PPR import PPR
+from module.expansion.ppr import PPR
 from module.expansion.neighborhood import NeighborExpand
 from module.graph.tools.samples import Samples
 
@@ -48,13 +48,14 @@ def graph_to_gml(graph, save_location, seeders, real_communities=None):
 
 
 def find_communities(seeder, graph):
-    ppr = PPR(graph)
+    ppr = PPR()
     communities = {}
 
     print("Seeding...", seeder.name)
     seeds = seeder.seed(graph)
     print("Seeds...", len(seeds))
 
+    #TODO doesnt this just expand neighborhood not seeds!
     expander = NeighborExpand(graph)
     expanded_seeds = expander.expand_seeds(seeds)
     print("Expanded seeds...", len(expanded_seeds))
@@ -63,7 +64,7 @@ def find_communities(seeder, graph):
     size_tuples = []
 
     for center_seed, neighbor_seeds in expanded_seeds.items():
-        detected = ppr.PPRRank(graph, 0.99, 0.0001, neighbor_seeds)
+        detected = ppr.ppr_rank(graph, neighbor_seeds)
         graph.node[center_seed]['cseed'] = str(community_count)
         for seed in neighbor_seeds:
             graph.node[seed]['nseed'] = str(community_count)

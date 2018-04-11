@@ -1,4 +1,4 @@
-from module.expansion.PPR import PPR
+from module.expansion.ppr import PPR
 from module.seeding.seed_filter import DefaultFilter
 
 
@@ -10,7 +10,7 @@ class PPRFilter(DefaultFilter):
         self.name = 'ppr_filter'
 
     def filter(self, seeds, graph):
-        ppr = PPR(graph)
+        ppr = PPR(tol=self.tol)
         visited = set()
 
         new_seeds = []
@@ -18,7 +18,7 @@ class PPRFilter(DefaultFilter):
         for seed in seeds:
             if seed not in visited:
                 new_seeds.append(seed)
-                bestset = ppr.PPRRank(graph, 0.99, self.tol, [seed])
+                bestset = ppr.ppr_rank(graph, seed)
                 for v in bestset:
                     visited.add(v)
         print("Was", len(seeds))

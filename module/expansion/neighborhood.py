@@ -3,7 +3,6 @@ class NeighborExpand:
     def __init__(self, graph):
         self.graph = graph
 
-
     def expand_seeds(self, seeds):
         expanded_seeds = {}
         for seed in seeds:

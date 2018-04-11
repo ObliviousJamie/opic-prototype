@@ -3,7 +3,7 @@ from random import choice
 import networkx as nx
 
 from module.crawling.mfc import MFC
-from module.expansion.PPR import PPR
+from module.expansion.ppr import PPR
 import matplotlib.pyplot as plt
 
 
@@ -13,11 +13,11 @@ class ConductancePlot:
         self.graph = graph
 
     def find_conductance(self, seeds, tol=0.0001, use_neighborhood=True):
-        ppr = PPR(self.graph)
+        ppr = PPR(tol=tol)
         community = []
         for seed in seeds:
             seed_array = self.graph[seed] if use_neighborhood else [seed]
-            best = ppr.PPR_conductance(self.graph,seed_array, alpha=0.99, tol=tol)
+            best = ppr.ppr_conductance(self.graph, seed_array)
             community.append((best[1], best[0]))
         return community
 
