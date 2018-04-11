@@ -9,24 +9,23 @@ import matplotlib.pyplot as plt
 
 class ConductancePlot:
 
-    def __init__(self, graph, seeds):
+    def __init__(self, graph):
         self.graph = graph
-        self.seeds = seeds
 
-    def find_conductance(self, tol=0.0001, use_neighborhood=True):
+    def find_conductance(self, seeds, tol=0.0001, use_neighborhood=True):
         ppr = PPR(self.graph)
         community = []
-        for seed in self.seeds:
+        for seed in seeds:
             seed_array = self.graph[seed] if use_neighborhood else [seed]
             best = ppr.PPR_conductance(self.graph,seed_array, alpha=0.99, tol=tol)
             community.append((best[1], best[0]))
         return community
 
-    def plot_coverage(self, label):
+    def plot_coverage(self, seeds, label):
         x, y = [], []
         visited = []
 
-        discovered_communities = self.find_conductance()
+        discovered_communities = self.find_conductance(seeds)
         sorted_communities = sorted(discovered_communities)
         for community_tuple in sorted_communities:
             for vertex in community_tuple[1]:

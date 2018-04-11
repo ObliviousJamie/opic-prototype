@@ -14,11 +14,13 @@ def plot(seeders, reader, added_loc=''):
     lfr = WriteLFR(reader)
     for seeder in seeders:
         lfr.calculate_communities(seeder)
+    lfr.calculate_mfc()
 
     plot_tuples = []
     for seeder in seeders:
         method_tup = (seeder.name, seeder.threshold)
         plot_tuples.append(method_tup)
+    plot_tuples.append(("mfc-original",0))
 
     save = (f"/home/jmoreland/Pictures/PRJ{added_loc}")
     lfr_plot = PlotLFR(plot_tuples, save_loc=save)
@@ -39,6 +41,7 @@ def plot_nowrite(seeders, reader, added_loc=''):
     lfr_plot = PlotLFR(plot_tuples, save_loc=save)
     #lfr_plot.plot([1000], [0.1, 0.3], [0.1, 0.2, 0.3, 0.4, 0.5])
     lfr_plot.plot(reader.network_sizes, reader.mixing_parameters, reader.overlapping_fractions)
+
 
 
 seeders_normal = [SeedOPIC(1.8, return_type='string'), SeedMinMFC(2.0, return_type='string'),
@@ -63,12 +66,14 @@ samples = Samples()
 everymfc = samples.every_mfcopic()
 everyopic = samples.every_opic()
 everymin = samples.every_minmfc()
+standard = samples.standard()
 
 #reader = ReadLFR([1000], [0.1], overlapping_fractions=[0.1, 0.3, 0.5])
 #plot(seeders_normal,reader, '/everymfcopic')
 #exit()
 
-#reader = ReadLFR([1000], [0.1], overlapping_fractions=[0.1, 0.3, 0.5])
+reader = ReadLFR([1000], [0.1], overlapping_fractions=[0.1, 0.3, 0.5])
+plot(standard, reader, '/all_nmi')
 #plot(everymfc, reader, '/everymfcopic')
 #plot(everymin, reader, '/everyminmfc')
 #plot(everyopic, reader, '/everyopic')
@@ -88,8 +93,8 @@ everymin = samples.every_minmfc()
 #plot(everymin, reader, '/everyminmfc')
 #plot(everyopic, reader, '/everyopic')
 
-reader = ReadLFR([1000, 5000], [0.1], overlapping_fractions=[0.1])
-plot_nowrite(everymfc, reader, '/everymfcopic')
+#reader = ReadLFR([1000, 5000], [0.1], overlapping_fractions=[0.1])
+#plot_nowrite(everymfc, reader, '/everymfcopic')
 #plot_nowrite(everymin, reader, '/everyminmfc')
 #plot_nowrite(everyopic, reader, '/everyopic')
 

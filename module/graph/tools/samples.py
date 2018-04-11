@@ -172,31 +172,39 @@ class Samples:
 
 
     def standard(self):
-        f_filter_ppr = PPRFilter(0.0001)
-        avg_peak = WindowPeakFinder(0.3, 20)
-        avg_peakv2 = WindowPeakFinder(0.8, 20)
-        mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
-        minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peakv2)
+        basic_peak = PeakFinder(0.1)
+        mfcopic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak)
+        minmfc = SeedMinMFC(1.0, return_type='string')
         return [mfcopic, minmfc]
 
     def mfcopic(self):
-        f_filter_ppr = PPRFilter(0.0001)
-        avg_peak = WindowPeakFinder(0.3, 20)
-        mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
+        basic_peak = PeakFinder(0.1)
+        mfcopic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak)
         return [mfcopic]
 
     def all(self):
         basic_peak = PeakFinder(0.1)
-        f_filter_ppr = PPRFilter(0.0001)
-        avg_peak = WindowPeakFinder(0.3, 20)
-        avg_peakv2 = WindowPeakFinder(0.8, 20)
-        #mfcopic = SeedMFCOPIC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peak)
-        #minmfc = SeedMinMFC(0, return_type='string', s_filter=f_filter_ppr, peak_filter=avg_peakv2)
-        #opic = SeedOPIC(2.0, return_type='string', s_filter=f_filter_ppr)
         mfcopic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak)
         minmfc = SeedMinMFC(1.0, return_type='string')
-        opic = SeedOPIC(0.7, return_type='string', s_filter=f_filter_ppr)
+        opic = SeedOPIC(1.5, return_type='string')
         return [mfcopic, minmfc, opic]
+
+    def varied(self, size):
+        basic_peak = PeakFinder(0.1)
+
+        seeders = []
+
+        for i in range(1,size):
+            mfcopic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak, start=str(i), label=f"MFCOPIC  vertex {i}")
+            minmfc = SeedMinMFC(1.0, return_type='string', start=str(i), label=f"MinMFC  vertex {i}")
+            opic = SeedOPIC(1.5, return_type='string', start=str(i), label=f"OPIC  vertex {i}")
+
+            if i % 2 == 0:
+                seeders.append(mfcopic)
+                seeders.append(minmfc)
+                seeders.append(opic)
+        return seeders
+
 
 
 

@@ -16,11 +16,8 @@ class FScore:
     def fscore(self, beta):
         harsh = self.fscore_loop(beta, self.real, self.discovered)
         optimistic = self.fscore_loop(beta, self.discovered, self.real)
-        harsh = self.fscore_harsh(1)
-        optimistic = self.fscore_optimistic(1)
         print("Working average out...")
         avg = (harsh + optimistic) / 2
-
 
         return avg
 
@@ -40,40 +37,6 @@ class FScore:
         avg = 0
         if len(scores) > 0:
             avg = sum(scores) / len(scores)
-        return avg
-
-    def fscore_harsh(self, beta):
-        scores = []
-        for _, community in self.discovered.items():
-            max_score = 0
-            if len(community) >= 15:
-                for _, found_community in self.real.items():
-                    precision, recall = self.precision_recall(community, found_community)
-                    score = 0
-                    if precision > 0 and recall > 0:
-                        score = self.calculate(precision, recall, beta)
-                    if score > max_score:
-                        max_score = score
-                scores.append(max_score)
-        avg = 0
-        if len(scores) > 0:
-            avg = sum(scores) / len(scores)
-        return avg
-
-    def fscore_optimistic(self, beta):
-        scores = []
-        for _, community in self.real.items():
-            max_score = 0
-            for _, found_community in self.discovered.items():
-                precision, recall = self.precision_recall(community, found_community)
-                score = 0
-                if precision > 0 and recall > 0:
-                    score = self.calculate(precision, recall, beta)
-                if score > max_score:
-                    max_score = score
-            scores.append(max_score)
-
-        avg = sum(scores) / len(scores)
         return avg
 
     def calculate(self, precision, recall, beta):

@@ -4,11 +4,16 @@ import csv
 class WriteCSV:
 
     @staticmethod
-    def write(rows_dict, save_location):
+    def write_scores(header, scores, save_location, beta=1):
         print('Writing...')
-        fieldnames = sorted(list(rows_dict.keys()))
-        with open(save_location, 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames= fieldnames)
-            writer.writeheader()
-            writer.writerow(rows_dict)
-        print('Done')
+        with open(f"{save_location}f{beta}.csv", 'w') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(header)
+            for method, fscores in scores.items():
+                row = [str(method)]
+                for score in fscores:
+                    row.append(str(score[beta - 1]))
+                writer.writerow(row)
+
+
+
