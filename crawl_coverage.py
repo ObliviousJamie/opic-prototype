@@ -37,10 +37,10 @@ class CrawlCoverageManager:
         flip_community = self.flip_list_dict(communities)
         self.crawl_coverage.coverage_plot(graph, communities, flip_community)
         plt.legend()
-        #plt.savefig(f"{self.save_base}_custom_graph.png")
         plt.title(f"{name}")
         plt.savefig(f"{self.save_base}_{name}.png")
         plt.close()
+
 
     @staticmethod
     def flip_list_dict(dictionary):
@@ -71,8 +71,4 @@ if __name__ == '__main__':
         graph, communities = option_import.import_real(directory, need_truth=True)
         print("Graph and community imported")
         crawl_manager.coverage_real(graph, communities)
-
-
-# ./crawl_coverage.py -s 5000 -m 0.1 -o 0.1
-# ./crawl_coverage.py -d ../data.txt
 

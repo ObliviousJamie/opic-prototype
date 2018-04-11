@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
-import time
-
+from module.LFR.helper import LFRHelper
 from module.import_options import Options
 from module.seeding.seeder.spreadhub import Spreadhub
 from module.statistics.plots.coverage_plot import ConductancePlot
@@ -16,96 +15,46 @@ class ConductancePlotManager:
         plt.xlabel("% Coverage")
         plt.ylabel("Maximum Conductance")
         plt.axis([0, 105, 0, 1.01])
-        print(seed_dict.keys())
+
         cplot = ConductancePlot(graph)
+
         for label, seeds in seed_dict.items():
             print(label, len(seeds))
-            start = time.time()
             cplot.plot_coverage(seeds, label)
-            end = time.time()
-            expand_time = self.stopWatch(end - start)
-            print(f"{label}  Seed time = {expand_time}")
 
-
-        start = time.time()
         cplot.plot_coverage_mfc()
-        end = time.time()
-        self.stopWatch(end - start)
-        expand_time = self.stopWatch(end - start)
-        print(f"mfc-original  Total time = {expand_time}")
 
-        start = time.time()
         spread = Spreadhub(int(0.15 * len(graph.nodes)))
         cplot.plot_coverage(spread.seed(graph), "Spreadhub")
-        end = time.time()
-        self.stopWatch(end - start)
 
-        expand_time = self.stopWatch(end - start)
-        print(f"Spreadhub  Total time = {expand_time}")
-
-        self._plot_lables()
-
-    #TODO remove
-    @staticmethod
-    def stopWatch(value):
-        #'https://stackoverflow.com/questions/5890304/stopwatch-in-python?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa'
-        '''From seconds to Days;Hours:Minutes;Seconds'''
-
-        valueD = (((value / 365) / 24) / 60)
-        Days = int(valueD)
-
-        valueH = (valueD - Days) * 365
-        Hours = int(valueH)
-
-        valueM = (valueH - Hours) * 24
-        Minutes = int(valueM)
-
-        valueS = (valueM - Minutes) * 60
-        Seconds = int(valueS)
-
-        times = f"Days {Days}, Hours {Hours}, Minutes {Minutes}, Seconds {Seconds}"
-        print(times)
-        return times
-
-
+        self._plot_labels()
 
     def plot_multicoverage(self, graph, save_name):
         seed_dict = {}
 
         for seeder in self.seeders:
-            print("Processing", seeder.name)
-            start = time.time()
+            print("Processing...", seeder.name)
             seeds = seeder.seed(graph)
-            end = time.time()
-            seed_time = self.stopWatch(end - start)
-            print(f"{seeder.name}  Seed time = {seed_time}")
-
 
             seed_dict[seeder.name] = seeds
 
-        print("Plotting tools...")
         self.plot_coverages(graph, seed_dict)
         if save_name != '':
             plt.savefig(save_name)
-        #plt.show()
         plt.close()
 
     def plot_with_lfr(self, reader, label='LFR'):
         lfr_dict = reader.read()
         for key, value in lfr_dict.items():
-            print(key)
-            if len(key) is 2:
-                size, mix = key
-                overlap = None
-            else:
-                size, mix, overlap = key
+            size, mix, overlap = LFRHelper.extract_key(key)
+
             graph, _ = value
             save_loc = f"{self.save_base}_%s_%s_%s_%s.png" % (label, size, mix, overlap)
             plt.title(f"Size: {size} Mix: {mix} Overlap {overlap}")
             self.plot_multicoverage(graph=graph, save_name=save_loc)
 
     @staticmethod
-    def _plot_lables():
+    def _plot_labels():
         plt.xlabel("% Coverage")
         plt.ylabel("Maximum Conductance")
         plt.legend()

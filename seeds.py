@@ -1,13 +1,21 @@
-from module.LFR.readLFR import ReadLFR
-from module.tools.extra.samples import Samples
+from module.import_options import Options
 from module.statistics.plots.seed_plot import SeedPlot
 
 if __name__ == '__main__':
-    reader = ReadLFR([1000], [0.3])
+    from sys import argv
+    import os
+    import datetime
 
-    seed_plot = SeedPlot(reader)
-    samps = Samples()
-    seeders = samps.every_mfcopic()
-    seeders.extend(samps.every_opic())
-    seed_plot.plot_fscore(1, seeders)
-    #seed_plot.plot_fscore(1)
+    option_import = Options(argv)
+    seeders = option_import.select_seeders()
+
+    directory = os.getcwd()
+    date = datetime.datetime.now().strftime("%y-%m-%H%S")
+    save_name = f"{directory}/crawl_coverage_{date}"
+
+    reader = option_import.generate_reader()
+    if reader is not None:
+        seed_plot = SeedPlot(reader)
+        seed_plot.plot_fscore(1, seeders)
+    else:
+        print("seeds.py does not support custom input")

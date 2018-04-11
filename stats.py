@@ -8,24 +8,8 @@ if __name__ == '__main__':
     import datetime
 
     option_import = Options(argv)
-    #TODO change back
     seeders = option_import.select_seeders()
-    #samps = Samples()
-    #seeders1 = samps.every_mfcopic()
-    #seeders2 = samps.every_minmfc()
-    #seeders3 = samps.every_opic()
-    #seeders = []
-    #seeders.extend(seeders1)
-    #seeders.extend(seeders2)
-    #seeders.extend(seeders3)
-    #size = len(seeders)
-    #print(f"All seeders = {size * 6}")
-
-    #seeders = samps.varied(1000)
     size = len(seeders)
-
-    print(f"Vertex seeders {size}")
-
 
     directory = os.getcwd()
     date = datetime.datetime.now().strftime("%y-%m-%H%S")
@@ -42,11 +26,6 @@ if __name__ == '__main__':
         print("Graph and community imported")
         seeders.append(Spreadhub(int(float(len(graph.nodes)) * 0.2)))
         rows = calculator.imported_fscores(graph, communities, label='tools')
-        if rows is not None:
-            print("Printed rows")
-
-# ./stats.py -s 5000 -m 0.1 -o 0.1 -c standard
-# ./stats.py -d ../data.txt -t ../truth.txt -c standard
-
-# -c -- standard, all, mfcopic
+        for name, score in rows:
+            print(f"Seeder: {name}   F1: {score[0]}     F2: {score[1]}")
 

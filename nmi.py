@@ -8,7 +8,10 @@ from module.seeding.seeder.spreadhub import Spreadhub
 
 class NMIManager:
 
-    def plot(self, seeders, reader, added_loc=''):
+    def __init__(self, cd_seeders):
+        self.cd_seeders = cd_seeders
+
+    def plot(self, reader, location=''):
         lfr = WriteLFR(reader)
 
         seeders.append(Spreadhub(int(float(reader.network_sizes[0]) * 0.2)))
@@ -23,29 +26,28 @@ class NMIManager:
             plot_tuples.append(method_tup)
         plot_tuples.append(("mfc-original", 0))
 
-        save = (f"/home/jmoreland/Pictures/PRJ{added_loc}")
-        lfr_plot = PlotLFR(plot_tuples, save_loc=save)
+        lfr_plot = PlotLFR(plot_tuples, save_loc=location)
         lfr_plot.plot(reader.network_sizes, reader.mixing_parameters, reader.overlapping_fractions)
 
-    def read_real(self, graph_seeders, graph, truth):
-        reader = ReadLFR([1000],[0.1],[0.1])
+    def read_real(self, network, truth):
+        reader = ReadLFR([1000], [0.1], [0.1])
         writer = WriteLFR(reader)
         communities = {}
 
-        for seeder in graph_seeders:
+        for seeder in self.cd_seeders:
             print(seeder)
-            key = ('','','')
+            key = ('', '', '')
             communities[key] = []
 
             ppr = PPR()
-            seeds = seeder.seed(graph)
+            seeds = seeder.seed(network)
 
             for seed in seeds:
-                seed = graph[seed]
-                bestset = ppr.ppr_rank(graph, seed)
+                seed = network[seed]
+                bestset = ppr.ppr_rank(network, seed)
                 communities[key].append(bestset)
 
-            method = f'custom{len(tools)}_{seeder.name}'
+            method = f'custom{len(network)}_{seeder.name}'
             writer.save(truth, communities, key, '', method)
             lfr_plot = PlotLFR((), save_loc='')
             nmi = lfr_plot.read(method, '', '', '', '')
@@ -63,20 +65,15 @@ if __name__ == '__main__':
     directory = os.getcwd()
 
     date = datetime.datetime.now().strftime("%y-%m-%H%S")
-    save_name = f"{directory}/nmi_{date}"
+    save_name = f"{directory}"
 
-    nmi_manager = NMIManager()
+    nmi_manager = NMIManager(seeders)
 
     reader = option_import.generate_reader()
     if reader is not None:
-        nmi_manager.plot(seeders, reader, '/all')
+        nmi_manager.plot(reader, save_name)
     else:
-        print(seeders)
-        graph, truth = option_import.import_real(directory, need_truth=True)
+        graph, communities = option_import.import_real(directory, need_truth=True)
         print("Graph and community imported")
-        nmi_manager.read_real(seeders, graph, truth)
-
-#standard = samples.standard()
-#
-#reader = ReadLFR([1000], [0.1], overlapping_fractions=[0.1, 0.3, 0.5])
-#plot(standard, reader, '/all_nmi')
+        seeders.append(Spreadhub(int(float(len(graph)) * 0.2)))
+        nmi_manager.read_real(graph, communities)
