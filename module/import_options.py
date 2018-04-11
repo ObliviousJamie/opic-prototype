@@ -2,7 +2,7 @@ import copy
 
 from module.LFR.readLFR import ReadLFR
 from module.tools.extra.samples import Samples
-from module.imports.importData import ImportData
+from module.imports.import_data import ImportData
 
 
 class Options:
