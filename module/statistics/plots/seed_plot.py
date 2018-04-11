@@ -3,8 +3,8 @@ import copy
 import matplotlib.pyplot as plt
 from random import choice
 
+from module.statistics.fscore.fscore import FScore
 from module.tools.extra.expand_seeds import SeedExpansion
-from module.statistics.fscore import FScore
 
 
 class SeedPlot:
@@ -13,18 +13,6 @@ class SeedPlot:
         self.lfr_dict = reader.read()
         self.expander = SeedExpansion()
         self.save_location = save_location
-
-    def plot_nmi(self):
-        for key, value in self.lfr_dict.items():
-            if len(key) is 2:
-                size, mix = key
-                overlap = ''
-            else:
-                size, mix, overlap = key
-
-            graph, _ = value
-
-            seed_dict = self._pick_seeds(graph)
 
     def plot_fscore(self, beta, seeders=None):
         for key, value in self.lfr_dict.items():
@@ -47,7 +35,7 @@ class SeedPlot:
             for total, seeds in seed_dict.items():
                 found = self.expander.expand(seeds, graph)
                 fscore = FScore(real_communities, found)
-                score = fscore.fscore(beta)
+                score = fscore.f_score(beta)
 
                 percentage = int(total / len(graph.nodes) * 100)
                 print(percentage)
@@ -63,7 +51,8 @@ class SeedPlot:
             else:
                 plt.show()
 
-    def _pick_seeds(self, graph):
+    @staticmethod
+    def _pick_seeds(graph):
         total_size = len(graph.nodes)
         all_seeds = {}
         node_list = list(graph.nodes)
@@ -84,9 +73,9 @@ class SeedPlot:
 
         return all_seeds
 
-    def _add_labels(self, metric):
+    @staticmethod
+    def _add_labels(metric):
         plt.title(f"Seeds against {metric}")
         plt.xlabel("Percentage of tools used as seeds")
         plt.ylabel(metric)
         plt.axis((0, 100, 0, 1.0))
-        # plt.legend()

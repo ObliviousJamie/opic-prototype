@@ -3,7 +3,7 @@ import time
 
 from module.import_options import Options
 from module.seeding.seeder.spreadhub import Spreadhub
-from module.statistics.coverage_plot import ConductancePlot
+from module.statistics.plots.coverage_plot import ConductancePlot
 
 
 class ConductancePlotManager:

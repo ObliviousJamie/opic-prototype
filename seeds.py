@@ -1,6 +1,6 @@
 from module.LFR.readLFR import ReadLFR
 from module.tools.extra.samples import Samples
-from module.statistics.seed_plot import SeedPlot
+from module.statistics.plots.seed_plot import SeedPlot
 
 if __name__ == '__main__':
     reader = ReadLFR([1000], [0.3])

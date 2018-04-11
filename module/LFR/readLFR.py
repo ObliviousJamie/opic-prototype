@@ -39,8 +39,6 @@ class ReadLFR:
             overlap = overlap.strip('_')
             output[(size, mix_param, overlap)] = (graph, communities)
 
-
-
     def extract(self, network, community):
         G = nx.Graph()
         members = {}
@@ -65,3 +63,4 @@ class ReadLFR:
                     members[vertex].append(cluster_number)
 
         return (G, members)
+

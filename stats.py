@@ -1,6 +1,6 @@
 from module.import_options import Options
 from module.seeding.seeder.spreadhub import Spreadhub
-from module.statistics.fscorecalculator import FscoreCalculator
+from module.statistics.fscore.fscorecalculator import FscoreCalculator
 
 if __name__ == '__main__':
     from sys import argv

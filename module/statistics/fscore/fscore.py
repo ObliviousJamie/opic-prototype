@@ -1,6 +1,3 @@
-import statistics
-
-
 class FScore:
 
     def __init__(self, real, discovered):
@@ -8,29 +5,27 @@ class FScore:
         self.discovered = discovered
 
     def f1(self):
-        return self.fscore(beta=1)
+        return self.f_score(beta=1)
 
     def f2(self):
-        return self.fscore(beta=2)
+        return self.f_score(beta=2)
 
-    def fscore(self, beta):
-        harsh = self.fscore_loop(beta, self.real, self.discovered)
-        optimistic = self.fscore_loop(beta, self.discovered, self.real)
-        print("Working average out...")
-        avg = (harsh + optimistic) / 2
-
+    def f_score(self, beta):
+        real = self._compare_loop(beta, self.real, self.discovered)
+        discovered = self._compare_loop(beta, self.discovered, self.real)
+        avg = (real + discovered) / 2
         return avg
 
-    def fscore_loop(self, beta, outer, inner):
+    def _compare_loop(self, beta, outer, inner):
         scores = []
         for _, community in outer.items():
             max_score = 0
             if len(community) >= 15:
                 for _, found_community in inner.items():
-                    precision, recall = self.precision_recall(community, found_community)
+                    precision, recall = self._precision_recall(community, found_community)
                     score = 0
                     if precision > 0 and recall > 0:
-                        score = self.calculate(precision, recall, beta)
+                        score = self._calculate(precision, recall, beta)
                     if score > max_score:
                         max_score = score
                 scores.append(max_score)
@@ -39,13 +34,15 @@ class FScore:
             avg = sum(scores) / len(scores)
         return avg
 
-    def calculate(self, precision, recall, beta):
+    @staticmethod
+    def _calculate(precision, recall, beta):
         beta_square = beta * beta
         denominator = (beta_square * precision) + recall
         f = (1 + beta_square) * (precision * recall) / denominator
         return f
 
-    def precision_recall(self, real_community, found_community):
+    @staticmethod
+    def _precision_recall(real_community, found_community):
         found_set = set(found_community)
         real_set = set(real_community)
 

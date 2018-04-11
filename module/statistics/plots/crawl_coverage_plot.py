@@ -12,83 +12,54 @@ from module.crawling.opic import OPIC
 
 class CrawlCoverage:
 
-    def __init__(self):
-        pass
-
     def coverage_plot(self, graph, communities, memberships):
         number_communities = len(communities.keys())
-
-        print(number_communities)
-
-
         plt.axis([0, number_communities, 0, 100])
 
         random_start = choice(list(graph.nodes))
-        print("Start: %s" % random_start)
-
+        print("Starting process from vertex: %s" % random_start)
 
         bfs = copy.deepcopy(communities)
         opic = copy.deepcopy(communities)
         dfs = copy.deepcopy(communities)
         mfc = copy.deepcopy(communities)
 
-        start_time = time.time()
         self.BFS(graph, bfs, memberships.copy(), random_start)
-        self.print_time(start_time)
-
-        start_time = time.time()
         self.DFS(graph, dfs, memberships.copy(), random_start)
-        self.print_time(start_time)
-
-        start_time = time.time()
         self.MFC(graph, mfc, memberships.copy(), random_start)
-        self.print_time(start_time)
-
-        start_time = time.time()
         self.OPIC(graph, opic, memberships.copy(), random_start)
-        self.print_time(start_time)
 
         plt.ylabel("Percentage of nodes traversed")
         plt.xlabel("Communities fully traversed")
 
-    def print_time(self, start_time):
-        end_time = time.time()
-        print()
-        print("Total time %s" % (end_time - start_time))
-        print()
-
     @staticmethod
-    def OPIC(G, opic_communities, opic_members, start):
-        print("OPIC running...")
-        x,y = [], []
+    def OPIC(graph, opic_communities, opic_members, start):
+        x, y = [], []
 
-        nodes = list(G.nodes)
+        nodes = list(graph.nodes)
         number_nodes = len(nodes)
         visited = 0.0
         community_explored = 0
-        opic = OPIC(G)
+        opic = OPIC(graph)
 
         opic.visit(start)
         nodes.remove(start)
         visited += 1.0
 
-        communities_incremented = CrawlCoverage.community_removed(start, opic_communities, opic_members)
+        communities_incremented = CrawlCoverage._community_removed(start, opic_communities, opic_members)
         community_explored += communities_incremented
 
         x.append(community_explored)
         y.append(visited / number_nodes)
 
         while nodes:
-            #max_cash_node = max(opic.cash_current, key=lambda i: opic.cash_current[i])
             max_cash_node = opic.local_max_vertex
             opic.visit(max_cash_node)
 
             if max_cash_node in nodes:
                 nodes.remove(max_cash_node)
 
-                communities_incremented = CrawlCoverage.community_removed(max_cash_node, opic_communities, opic_members)
-                if (communities_incremented + community_explored) > community_explored:
-                    print("OPIC Explored %s percent" % ((visited / number_nodes) * 100 ))
+                communities_incremented = CrawlCoverage._community_removed(max_cash_node, opic_communities, opic_members)
                 community_explored += communities_incremented
 
                 visited += 1
@@ -98,7 +69,7 @@ class CrawlCoverage:
         plt.plot(x, y, linewidth=2, label="OPIC")
 
     @staticmethod
-    def BFS(G, bfs_communities, bfs_members, start):
+    def BFS(graph, bfs_communities, bfs_members, start):
         x, y = [], []
         community_explored, nodes_explored = 0, 0
 
@@ -109,22 +80,20 @@ class CrawlCoverage:
         visited.add(start)
 
         while queue.not_empty:
-            if len(visited) > len(G.nodes):
+            if len(visited) > len(graph.nodes):
                 print("Something went wrong")
                 break
             if queue.empty():
                 break
             u = queue.get()
 
-            communities_incremented = CrawlCoverage.community_removed(u, bfs_communities, bfs_members)
-            if (communities_incremented + community_explored) > community_explored:
-                print("BFS Explored %2.f percent" % ((nodes_explored / len(G.nodes)) * 100 ))
+            communities_incremented = CrawlCoverage._community_removed(u, bfs_communities, bfs_members)
             community_explored += communities_incremented
             nodes_explored += 1.0
 
-            y.append((nodes_explored / len(G.nodes)) * 100)
+            y.append((nodes_explored / len(graph.nodes)) * 100)
             x.append(community_explored)
-            for vertex in G[u]:
+            for vertex in graph[u]:
                 if vertex not in visited:
                     queue.put(vertex)
                     visited.add(vertex)
@@ -132,40 +101,7 @@ class CrawlCoverage:
         plt.plot(x, y, linewidth=2, label="BFS")
 
     @staticmethod
-    def random_walk(G, random_communities, random_members, start):
-        print("Random walk running")
-        x, y = [], []
-        community_explored, nodes_explored = 0, 0
-
-        queue = []
-        visited = []
-        # Add first node
-        queue.append(start)
-        visited.append(start)
-
-        while queue:
-            if not queue:
-                break
-
-            u = choice(queue)
-            queue.remove(u)
-
-            communities_incremented = CrawlCoverage.community_removed(u, random_communities, random_members)
-            community_explored += communities_incremented
-            nodes_explored += 1.0
-
-            y.append((nodes_explored / len(G.nodes)) * 100)
-            x.append(community_explored)
-            for vertex in G[u]:
-                if vertex not in visited:
-                    queue.append(vertex)
-                    visited.append(vertex)
-
-        plt.plot(x, y, linewidth=2, label="Random")
-
-    @staticmethod
-    def DFS(G, dfs_communities, dfs_members, start):
-        print("DFS running")
+    def DFS(graph, dfs_communities, dfs_members, start):
         x, y = [], []
         stack = []
         community_explored, nodes_explored = 0, 0
@@ -178,13 +114,13 @@ class CrawlCoverage:
             u = stack.pop()
             nodes_explored += 1
 
-            communities_incremented = CrawlCoverage.community_removed(u, dfs_communities, dfs_members)
+            communities_incremented = CrawlCoverage._community_removed(u, dfs_communities, dfs_members)
             community_explored += communities_incremented
 
-            y.append(nodes_explored / len(G.nodes) * 100)
+            y.append(nodes_explored / len(graph.nodes) * 100)
             x.append(community_explored)
 
-            for vertex in G[u]:
+            for vertex in graph[u]:
                 if vertex not in visited:
                     visited.add(vertex)
                     stack.append(vertex)
@@ -192,7 +128,7 @@ class CrawlCoverage:
         plt.plot(x, y, linewidth=2, label="DFS")
 
     @staticmethod
-    def MFC(G, mfc_communities, mfc_members, start):
+    def MFC(graph, mfc_communities, mfc_members, start):
         x, y = [], []
         community_explored, nodes_explored = 0, 0
         reference_dictionary = {}
@@ -214,21 +150,18 @@ class CrawlCoverage:
 
             del reference_dictionary[max_vertex]
 
-            communities_incremented = CrawlCoverage.community_removed(max_vertex, mfc_communities, mfc_members)
-
-            if (communities_incremented + community_explored) > community_explored:
-                print("MFC Explored %2.f percent" % ((nodes_explored / len(G.nodes)) * 100 ))
+            communities_incremented = CrawlCoverage._community_removed(max_vertex, mfc_communities, mfc_members)
 
             community_explored += communities_incremented
             nodes_explored += 1.0
 
-            y.append((nodes_explored / len(G.nodes)) * 100)
+            y.append((nodes_explored / len(graph.nodes)) * 100)
             x.append(community_explored)
 
             visited.add(max_vertex)
             local_max = (-1, '0')
-            for vertex in G[max_vertex]:
-                degree = G.degree(vertex)
+            for vertex in graph[max_vertex]:
+                degree = graph.degree(vertex)
                 # Update reference if it exists and has not been explored
                 if vertex in visited and vertex in reference_dictionary:
                     updated_ref = (reference_dictionary[vertex] * degree) + 1.0
@@ -246,13 +179,11 @@ class CrawlCoverage:
         plt.plot(x, y, linewidth=2, label="MFC")
 
     @staticmethod
-    def community_removed(vertex, communities, members):
+    def _community_removed(vertex, communities, members):
         number_empty = 0
         vertex = str(vertex)
 
-
         for community in members.get(vertex, []):
-            # TODO May have already been removed
             communities[community].remove(vertex)
 
             if not communities[community]:
