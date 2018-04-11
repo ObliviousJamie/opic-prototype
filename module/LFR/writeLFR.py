@@ -1,7 +1,7 @@
 import os
 from random import choice
 
-from module.crawling.MFC import MFC
+from module.crawling.mfc import MFC
 from module.expansion.PPR import PPR
 from module.graph.tools.expand_seeds import SeedExpansion
 

@@ -1,4 +1,4 @@
-from module.crawling.OPIC import OPIC
+from module.crawling.opic import OPIC
 from module.seeding.hub_seed import HubSeeder
 
 
@@ -13,7 +13,7 @@ class SeedOPICHub(HubSeeder):
         if start is None:
             start = self.random_vertex(G)
 
-        opic = OPIC(G, 40)
+        opic = OPIC(G)
         opic.visit(start)
         iterations = len(G.edges())
 

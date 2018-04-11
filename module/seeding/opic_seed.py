@@ -1,6 +1,6 @@
 import numpy as np
 
-from module.crawling.OPIC import OPIC
+from module.crawling.opic import OPIC
 from module.seeding.threshold_seed import ThresholdSeeder
 
 
@@ -20,7 +20,7 @@ class SeedOPIC(ThresholdSeeder):
         if start is None:
             start = self.random_vertex(G)
 
-        opic = OPIC(G, 40)
+        opic = OPIC(G)
         opic.visit(start)
         iterations = len(G.edges())
 

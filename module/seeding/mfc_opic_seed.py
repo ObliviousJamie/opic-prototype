@@ -1,7 +1,7 @@
 import numpy as np
 
-from module.crawling.MFC import MFC
-from module.crawling.OPIC import OPIC
+from module.crawling.mfc import MFC
+from module.crawling.opic import OPIC
 from module.seeding.threshold_seed import ThresholdSeeder
 
 
@@ -23,7 +23,7 @@ class SeedMFCOPIC(ThresholdSeeder):
 
         mfc = MFC(G, start)
 
-        opic = OPIC(G, 40)
+        opic = OPIC(G)
         opic.visit(start)
 
         x_axis, y_axis = [], []

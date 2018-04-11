@@ -5,7 +5,7 @@ import copy
 
 import time
 
-from module.crawling.OPIC import OPIC
+from module.crawling.opic import OPIC
 
 
 # TODO plot size of communities found
@@ -66,7 +66,7 @@ class CrawlCoverage:
         number_nodes = len(nodes)
         visited = 0.0
         community_explored = 0
-        opic = OPIC(G, 40)
+        opic = OPIC(G)
 
         opic.visit(start)
         nodes.remove(start)

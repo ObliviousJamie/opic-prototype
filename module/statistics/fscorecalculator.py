@@ -1,4 +1,4 @@
-from module.crawling.MFC import MFC
+from module.crawling.mfc import MFC
 from module.graph.tools.expand_seeds import SeedExpansion
 from module.graph.tools.write_csv import WriteCSV
 from module.statistics.fscore import FScore

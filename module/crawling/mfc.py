@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-
-
 class MFC:
 
     def __init__(self, G, start):
@@ -8,9 +5,8 @@ class MFC:
         self.start = start
         self.reference_dictionary = {start: 0}
         self.visited = [start]
-        self.x, self.y = [], []
+        self.max_references = []
         self.i = 0
-
         self.last_max = 2
         self.local_max = (-1, 'None')
 
@@ -46,18 +42,16 @@ class MFC:
                     self.reference_dictionary[vertex] = ref_score
                     self.visited.append(vertex)
 
-            self.x.append(self.i)
-            self.y.append(max_ref)
+            self.max_references.append(max_ref)
             self.i += 1
 
             return max_vertex
-
 
     def empty(self):
         return not self.reference_dictionary.keys()
 
     def communities(self, delta=0.5):
-        self.reset()
+        self._reset()
 
         community_index = -1
 
@@ -69,7 +63,7 @@ class MFC:
 
         while not self.empty():
             current_max = self.next()
-            current_ref = self.y.pop()
+            current_ref = self.max_references.pop()
 
             if current_ref > smax:
                 smax = current_ref
@@ -86,15 +80,11 @@ class MFC:
 
             last_ref = current_ref
 
-        self.reset()
+        self._reset()
         return community_dict
 
-    def reset(self):
+    def _reset(self):
         self.reference_dictionary = {self.start: 0}
         self.visited = [self.start]
-        self.x, self.y = [], []
+        self.max_references = []
         self.i = 0
-
-    def plot(self):
-        plt.plot(self.x, self.y, linewidth=2.0)
-        # plt.show()

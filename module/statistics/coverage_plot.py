@@ -2,7 +2,7 @@ from random import choice
 
 import networkx as nx
 
-from module.crawling.MFC import MFC
+from module.crawling.mfc import MFC
 from module.expansion.PPR import PPR
 import matplotlib.pyplot as plt
 

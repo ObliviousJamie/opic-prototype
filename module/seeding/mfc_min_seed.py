@@ -1,6 +1,6 @@
 import numpy as np
 
-from module.crawling.MFC import MFC
+from module.crawling.mfc import MFC
 from module.seeding.threshold_seed import ThresholdSeeder
 
 
@@ -29,13 +29,13 @@ class SeedMinMFC(ThresholdSeeder):
             max_vertex = mfc.next()
             x.append(max_vertex)
             if self.peak_filter is not None:
-                if mfc.y[-1] != 0 and self.peak_filter.is_peak((1 / mfc.y[-1])):
+                if mfc.max_references[-1] != 0 and self.peak_filter.is_peak((1 / mfc.max_references[-1])):
                     seeds.append(max_vertex)
 
         if self.peak_filter is None:
             print('Running gaussian peak detections')
             y_axis = []
-            for ref in mfc.y:
+            for ref in mfc.max_references:
                 if ref == 0:
                     y_axis.append(0)
                 else:

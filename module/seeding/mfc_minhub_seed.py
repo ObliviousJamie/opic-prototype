@@ -1,4 +1,4 @@
-from module.crawling.MFC import MFC
+from module.crawling.mfc import MFC
 from module.seeding.hub_seed import HubSeeder
 
 
@@ -20,7 +20,7 @@ class SeedMinhubMFC(HubSeeder):
 
         while not mfc.empty():
             max_vertex = mfc.next()
-            max_ref = mfc.y[-1]
+            max_ref = mfc.max_references[-1]
             # Invert to make a max heap
             inverted_ref = max_ref * -1
             ref_pair = (inverted_ref, max_vertex)
