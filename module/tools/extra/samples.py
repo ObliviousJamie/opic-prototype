@@ -1,7 +1,7 @@
-from module.seeding.basic_peak_finder import PeakFinder
-from module.seeding.mfc_min_seed import SeedMinMFC
-from module.seeding.mfc_opic_seed import SeedMFCOPIC
-from module.seeding.opic_seed import SeedOPIC
+from module.seeding.peak.basic_peak_finder import PeakFinder
+from module.seeding.seeder.cd_mfc import SeedMFC
+from module.seeding.seeder.cd_mfcopic import SeedMFCOPIC
+from module.seeding.seeder.cd_opic import SeedOPIC
 
 
 class Samples:
@@ -10,7 +10,7 @@ class Samples:
     def standard():
         basic_peak = PeakFinder(0.1)
         mfcopic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak)
-        minmfc = SeedMinMFC(1.0, return_type='string')
+        minmfc = SeedMFC(1.0, return_type='string')
         return [mfcopic, minmfc]
 
     @staticmethod
@@ -23,6 +23,6 @@ class Samples:
     def all():
         basic_peak = PeakFinder(0.1)
         mfcopic = SeedMFCOPIC(0, return_type='string', peak_filter=basic_peak)
-        minmfc = SeedMinMFC(1.0, return_type='string')
+        minmfc = SeedMFC(1.0, return_type='string')
         opic = SeedOPIC(1.5, return_type='string')
         return [mfcopic, minmfc, opic]

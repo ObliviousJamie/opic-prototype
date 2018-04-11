@@ -2,17 +2,17 @@ import numpy as np
 
 from module.crawling.mfc import MFC
 from module.crawling.opic import OPIC
-from module.seeding.threshold_seed import ThresholdSeeder
+from module.seeding.seeder.threshold_seed import ThresholdSeeder
 
 
 class SeedMFCOPIC(ThresholdSeeder):
 
-    def __init__(self, threshold, label=None, start=None, return_type="integer", s_filter=None, peak_filter=None):
+    def __init__(self, threshold=1.0, label=None, start=None, return_type="integer", s_filter=None, peak_filter=None):
         super(SeedMFCOPIC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter, peak_filter=peak_filter)
         self.start = start
 
         if label is None:
-            self._gen_name("MFCOPIC")
+            self._gen_name("CD-MFCOPIC")
         else:
             self.name = label
 

@@ -3,7 +3,7 @@ from module.LFR.readLFR import ReadLFR
 from module.LFR.writeLFR import WriteLFR
 from module.expansion.ppr import PPR
 from module.import_options import Options
-from module.seeding.spreadhub_seed import Spreadhub
+from module.seeding.seeder.spreadhub import Spreadhub
 
 
 class NMIManager:

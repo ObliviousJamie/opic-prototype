@@ -1,4 +1,4 @@
-from module.seeding.seed import Seeder
+from module.seeding.seeder.seeder import Seeder
 
 
 class Spreadhub(Seeder):
@@ -8,8 +8,8 @@ class Spreadhub(Seeder):
         self.seed_limit = seed_limit
         self.name = 'Spreadhub'
 
-    def seed(self, G):
-        degree_seq = sorted([(degree, vertex) for vertex, degree in G.degree()], reverse=True)
+    def seed(self, graph):
+        degree_seq = sorted([(degree, vertex) for vertex, degree in graph.degree()], reverse=True)
 
         seeds = []
         visited = set()
@@ -18,11 +18,11 @@ class Spreadhub(Seeder):
         for degree, vertex in degree_seq:
             if len(seeds) < self.seed_limit and vertex not in visited:
                 seeds.append(vertex)
-                visited.update(list(G[vertex]))
+                visited.update(list(graph[vertex]))
             if len(seeds) >= self.seed_limit and vertex not in visited:
                 if degree == last_degree:
                     seeds.append(vertex)
-                    visited.update(list(G[vertex]))
+                    visited.update(list(graph[vertex]))
                 else:
                     return seeds
             last_degree = degree

@@ -1,17 +1,17 @@
 import numpy as np
 
 from module.crawling.mfc import MFC
-from module.seeding.threshold_seed import ThresholdSeeder
+from module.seeding.seeder.threshold_seed import ThresholdSeeder
 
 
-class SeedMinMFC(ThresholdSeeder):
+class SeedMFC(ThresholdSeeder):
 
-    def __init__(self, threshold, label=None, start=None, return_type="integer", s_filter=None, peak_filter=None):
-        super(SeedMinMFC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter, peak_filter=peak_filter)
+    def __init__(self, threshold=1.0, label=None, start=None, return_type="integer", s_filter=None, peak_filter=None):
+        super(SeedMFC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter, peak_filter=peak_filter)
         self.start = start
 
         if label is None:
-            self._gen_name("MinPeakMFC")
+            self._gen_name("CD-MFC")
         else:
             self.name = label
 
@@ -33,7 +33,6 @@ class SeedMinMFC(ThresholdSeeder):
                     seeds.append(max_vertex)
 
         if self.peak_filter is None:
-            print('Running gaussian peak detections')
             y_axis = []
             for ref in mfc.max_references:
                 if ref == 0:

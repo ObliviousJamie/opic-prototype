@@ -1,4 +1,4 @@
-class DefaultFilter():
+class NeighborhoodFilter():
 
     def __init__(self):
         self.name = 'neighborhood_filter'

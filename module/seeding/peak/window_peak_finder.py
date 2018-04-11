@@ -1,6 +1,6 @@
 from collections import deque
 
-from module.seeding.basic_peak_finder import PeakFinder
+from module.seeding.peak.basic_peak_finder import PeakFinder
 
 
 class WindowPeakFinder(PeakFinder):
@@ -19,7 +19,7 @@ class WindowPeakFinder(PeakFinder):
 
         average = 0
         if self.size > 0:
-            average =  sum  / self.size
+            average = sum / self.size
 
         self.queue.appendleft(value)
 
@@ -29,6 +29,3 @@ class WindowPeakFinder(PeakFinder):
         difference = value - average
         if difference > (self.threshold * average):
             return True
-
-
-

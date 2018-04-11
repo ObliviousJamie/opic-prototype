@@ -1,5 +1,5 @@
 import heapq
-from module.seeding.seed import Seeder
+from module.seeding.seeder.seeder import Seeder
 
 
 class HubSeeder(Seeder):
@@ -28,7 +28,7 @@ class HubSeeder(Seeder):
     def neighbor(self, graph, vertex, heap):
         for ref, node in heap:
             if graph.has_edge(vertex, node):
-                return (ref, node)
+                return ref, node
         return None
 
     def filter_candidates(self, candidates, raw_heap, graph):

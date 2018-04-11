@@ -1,6 +1,5 @@
-from module.tools.extra.samples import Samples
 from module.import_options import Options
-from module.seeding.spreadhub_seed import Spreadhub
+from module.seeding.seeder.spreadhub import Spreadhub
 from module.statistics.fscorecalculator import FscoreCalculator
 
 if __name__ == '__main__':

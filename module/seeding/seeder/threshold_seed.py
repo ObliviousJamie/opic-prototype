@@ -1,6 +1,6 @@
 import peakutils
 
-from module.seeding.seed import Seeder
+from module.seeding.seeder.seeder import Seeder
 
 
 class ThresholdSeeder(Seeder):
@@ -10,7 +10,6 @@ class ThresholdSeeder(Seeder):
         self.threshold = threshold
         self.s_filter = s_filter
         self.peak_filter = peak_filter
-
 
     def pick_peaks(self, x_axis, y_axis, G):
         seeds = []
@@ -36,5 +35,3 @@ class ThresholdSeeder(Seeder):
 
         if self.s_filter is not None:
             self.name = f'{self.name}_{self.s_filter.name}'
-
-

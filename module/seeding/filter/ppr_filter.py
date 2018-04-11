@@ -1,8 +1,8 @@
 from module.expansion.ppr import PPR
-from module.seeding.seed_filter import DefaultFilter
+from module.seeding.filter.neighborhood_filter import NeighborhoodFilter
 
 
-class PPRFilter(DefaultFilter):
+class PPRFilter(NeighborhoodFilter):
 
     def __init__(self, tol):
         super().__init__()
@@ -18,12 +18,9 @@ class PPRFilter(DefaultFilter):
         for seed in seeds:
             if seed not in visited:
                 new_seeds.append(seed)
-                bestset = ppr.ppr_rank(graph, seed)
-                for v in bestset:
+                best_set = ppr.ppr_rank(graph, seed)
+                for v in best_set:
                     visited.add(v)
-        print("Was", len(seeds))
-        print("Now", len(new_seeds))
-
         return new_seeds
 
 

@@ -1,5 +1,5 @@
 from module.crawling.opic import OPIC
-from module.seeding.hub_seed import HubSeeder
+from module.seeding.seeder.alternative.hub_seed import HubSeeder
 
 
 class SeedOPICHub(HubSeeder):
@@ -33,9 +33,7 @@ class SeedOPICHub(HubSeeder):
                     candidates.append(neighbor)
             opic.visit(max_vertex)
 
-        print(sorted(seeds, reverse=True))
         seeds = self.filter_candidates(candidates, seeds, G)
-        print(sorted(seeds))
 
         return seeds
 

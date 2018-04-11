@@ -1,4 +1,4 @@
-class PeakFinder():
+class PeakFinder:
 
     def __init__(self, threshold):
         self.threshold = threshold

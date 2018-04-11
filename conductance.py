@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import time
 
 from module.import_options import Options
-from module.seeding.spreadhub_seed import Spreadhub
+from module.seeding.seeder.spreadhub import Spreadhub
 from module.statistics.coverage_plot import ConductancePlot
 
 
