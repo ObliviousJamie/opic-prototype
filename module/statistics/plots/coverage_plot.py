@@ -1,6 +1,7 @@
 from random import choice
 
 import networkx as nx
+from tqdm import tqdm
 
 from module.crawling.mfc import MFC
 from module.expansion.ppr import PPR
@@ -15,7 +16,7 @@ class ConductancePlot:
     def find_conductance(self, seeds, tol=0.0001, use_neighborhood=True):
         ppr = PPR(tol=tol)
         community = []
-        for seed in seeds:
+        for seed in tqdm(seeds, desc="Expanding seeds to communities", unit="seed"):
             seed_array = self.graph[seed] if use_neighborhood else [seed]
             best = ppr.ppr_conductance(self.graph, seed_array)
             community.append((best[1], best[0]))

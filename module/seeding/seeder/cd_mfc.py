@@ -1,6 +1,7 @@
 import numpy as np
 
 from module.crawling.mfc import MFC
+from module.seeding.seed_progress import SeedProgress
 from module.seeding.seeder.threshold_seed import ThresholdSeeder
 
 
@@ -16,6 +17,8 @@ class SeedMFC(ThresholdSeeder):
             self.name = label
 
     def seed(self, G):
+        progress = SeedProgress(G, label=self.name)
+
         start = self.start
         if start is None:
             start = self.random_vertex(G)
@@ -32,6 +35,8 @@ class SeedMFC(ThresholdSeeder):
                 if mfc.max_references[-1] != 0 and self.peak_filter.is_peak((1 / mfc.max_references[-1])):
                     seeds.append(max_vertex)
 
+            progress.update()
+
         if self.peak_filter is None:
             y_axis = []
             for ref in mfc.max_references:
@@ -46,5 +51,7 @@ class SeedMFC(ThresholdSeeder):
 
         if self.s_filter is not None:
             seeds = self.s_filter.filter(seeds, G)
+
+        progress.finish()
 
         return seeds

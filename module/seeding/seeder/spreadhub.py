@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 from module.seeding.seeder.seeder import Seeder
 
 
@@ -15,7 +17,7 @@ class Spreadhub(Seeder):
         visited = set()
 
         last_degree = -1
-        for degree, vertex in degree_seq:
+        for degree, vertex in tqdm(degree_seq, desc=f"{self.name} finding seeds"):
             if len(seeds) < self.seed_limit and vertex not in visited:
                 seeds.append(vertex)
                 visited.update(list(graph[vertex]))

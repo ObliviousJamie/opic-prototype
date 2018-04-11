@@ -1,6 +1,8 @@
 import os
 from random import choice
 
+from tqdm import tqdm
+
 from module.crawling.mfc import MFC
 from module.expansion.ppr import PPR
 from module.tools.extra.expand_seeds import SeedExpansion
@@ -25,7 +27,7 @@ class WriteCommunities:
 
         result_f = "%s%s_%s_result.txt" % (self.location, unique_key, unique_result_key)
 
-        print("Seeds: %s Key: %s Method: %s" % (len(result[key]), key, method))
+        print(f"Saving communities for benchmark network of Size {nodes}, Mix: {mix} Overlap: {overlap} ")
 
         with open(result_f, "w") as f:
             for community_set in result[key]:
@@ -53,13 +55,12 @@ class WriteCommunities:
         for key, value in lfr_graphs.items():
             graph, membership = value
             memberships.append(membership)
-
-            print("%s Seeding..." % seeder.name)
             seeds = seeder.seed(graph)
 
             ppr = PPR()
             communities[key] = []
-            for seed in seeds:
+            print()
+            for seed in tqdm(seeds, desc=f"{seeder.name} expanding seeds to communities", unit="seed"):
                 seed = graph[seed]
                 best_set = ppr.ppr_rank(graph, seed)
                 communities[key].append(best_set)

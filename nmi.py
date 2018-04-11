@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 from module.lfr.nmi_plot import PlotNMI
 from module.lfr.lfr_reader import LFRReader
 from module.lfr.community_writer import WriteCommunities
@@ -21,7 +23,8 @@ class NMIManager:
         lfr.calculate_mfc(reader)
 
         plot_tuples = []
-        for seeder in seeders:
+        print("Huh?")
+        for seeder in tqdm(seeders):
             method_tup = (seeder.name, seeder.threshold)
             plot_tuples.append(method_tup)
         plot_tuples.append(("mfc-original", 0))

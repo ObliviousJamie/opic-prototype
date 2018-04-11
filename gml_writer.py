@@ -1,4 +1,5 @@
 import networkx as nx
+from tqdm import tqdm
 
 from module.lfr.helper import LFRHelper
 from module.expansion.neighborhood import NeighborExpand
@@ -58,19 +59,16 @@ class GMLWriter:
         ppr = PPR()
         communities = {}
 
-        print("Seeding...", seeder.name)
         seeds = seeder.seed(graph)
-        print("Seeds...", len(seeds))
 
-        # TODO doesnt this just expand neighborhood not seeds!
         expander = NeighborExpand(graph)
         expanded_seeds = expander.expand_seeds(seeds)
-        print("Expanded seeds...", len(expanded_seeds))
 
         community_count = 0
         size_tuples = []
 
-        for center_seed, neighbor_seeds in expanded_seeds.items():
+        print()
+        for center_seed, neighbor_seeds in tqdm(expanded_seeds.items(), desc="Expanding seeds to form communities", unit="seed", total=len(seeds)):
             detected = ppr.ppr_rank(graph, neighbor_seeds)
             graph.node[center_seed]['cseed'] = str(community_count)
             for seed in neighbor_seeds:
@@ -79,8 +77,6 @@ class GMLWriter:
             if len(detected) > 2:
                 size_tuples.append((len(detected), detected))
                 community_count += 1
-
-        print(f"Communities discovered = {community_count}")
 
         community_count = 0
         size_tuples = sorted(size_tuples)

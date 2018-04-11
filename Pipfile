@@ -11,6 +11,7 @@ networkx = "*"
 matplotlib = "*"
 peakutils = "*"
 numpy = "*"
+tqdm = "*"
 
 
 [dev-packages]

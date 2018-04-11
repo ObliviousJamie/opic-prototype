@@ -68,11 +68,8 @@ class FscoreCalculator:
         all_scores.setdefault('mfc-orignal', []).append((f1, f2))
 
         for seeder in self.seeders:
-            print(f"Seeding {seeder.name}...")
             seeds = seeder.seed(graph)
-            print(f"Expanding seeds...")
             found = self.expander.expand(seeds, graph)
-            print(f"Computing fscores...")
             f1, f2 = self.fscores(communities, found)
             all_scores.setdefault(seeder.name, []).append((f1, f2))
 

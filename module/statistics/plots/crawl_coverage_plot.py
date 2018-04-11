@@ -5,6 +5,8 @@ import copy
 
 import time
 
+from tqdm import tqdm
+
 from module.crawling.opic import OPIC
 
 
@@ -24,16 +26,16 @@ class CrawlCoverage:
         dfs = copy.deepcopy(communities)
         mfc = copy.deepcopy(communities)
 
-        self.BFS(graph, bfs, memberships.copy(), random_start)
-        self.DFS(graph, dfs, memberships.copy(), random_start)
-        self.MFC(graph, mfc, memberships.copy(), random_start)
-        self.OPIC(graph, opic, memberships.copy(), random_start)
+        self.bfs(graph, bfs, memberships.copy(), random_start)
+        self.dfs(graph, dfs, memberships.copy(), random_start)
+        self.mfc(graph, mfc, memberships.copy(), random_start)
+        self.opic(graph, opic, memberships.copy(), random_start)
 
         plt.ylabel("Percentage of nodes traversed")
         plt.xlabel("Communities fully traversed")
 
     @staticmethod
-    def OPIC(graph, opic_communities, opic_members, start):
+    def opic(graph, opic_communities, opic_members, start):
         x, y = [], []
 
         nodes = list(graph.nodes)
@@ -52,6 +54,8 @@ class CrawlCoverage:
         x.append(community_explored)
         y.append(visited / number_nodes)
 
+        pbar = tqdm(total=number_nodes, desc="opic crawling", unit='vertex')
+
         while nodes:
             max_cash_node = opic.local_max_vertex
             opic.visit(max_cash_node)
@@ -59,17 +63,22 @@ class CrawlCoverage:
             if max_cash_node in nodes:
                 nodes.remove(max_cash_node)
 
-                communities_incremented = CrawlCoverage._community_removed(max_cash_node, opic_communities, opic_members)
+                communities_incremented = CrawlCoverage._community_removed(max_cash_node, opic_communities,
+                                                                           opic_members)
                 community_explored += communities_incremented
 
                 visited += 1
                 x.append(community_explored)
                 y.append((visited / number_nodes) * 100)
 
-        plt.plot(x, y, linewidth=2, label="OPIC")
+            pbar.update()
+
+        pbar.close()
+
+        plt.plot(x, y, linewidth=2, label="opic")
 
     @staticmethod
-    def BFS(graph, bfs_communities, bfs_members, start):
+    def bfs(graph, bfs_communities, bfs_members, start):
         x, y = [], []
         community_explored, nodes_explored = 0, 0
 
@@ -78,6 +87,8 @@ class CrawlCoverage:
         # Add first node
         queue.put(start)
         visited.add(start)
+
+        pbar = tqdm(total=len(graph.nodes), desc="bfs crawling", unit='vertex')
 
         while queue.not_empty:
             if len(visited) > len(graph.nodes):
@@ -98,10 +109,14 @@ class CrawlCoverage:
                     queue.put(vertex)
                     visited.add(vertex)
 
-        plt.plot(x, y, linewidth=2, label="BFS")
+            pbar.update()
+
+        pbar.close()
+        plt.plot(x, y, linewidth=2, label="bfs")
+
 
     @staticmethod
-    def DFS(graph, dfs_communities, dfs_members, start):
+    def dfs(graph, dfs_communities, dfs_members, start):
         x, y = [], []
         stack = []
         community_explored, nodes_explored = 0, 0
@@ -109,6 +124,8 @@ class CrawlCoverage:
         visited = set()
         visited.add(start)
         stack.append(start)
+
+        pbar = tqdm(total=len(graph.nodes), desc="dfs crawling", unit='vertex')
 
         while stack:
             u = stack.pop()
@@ -125,13 +142,18 @@ class CrawlCoverage:
                     visited.add(vertex)
                     stack.append(vertex)
 
-        plt.plot(x, y, linewidth=2, label="DFS")
+            pbar.update()
+
+        pbar.close()
+        plt.plot(x, y, linewidth=2, label="dfs")
 
     @staticmethod
-    def MFC(graph, mfc_communities, mfc_members, start):
+    def mfc(graph, mfc_communities, mfc_members, start):
         x, y = [], []
         community_explored, nodes_explored = 0, 0
         reference_dictionary = {}
+
+        pbar = tqdm(total=len(graph.nodes), desc="bfs crawling", unit='vertex')
 
         visited = set()
         # Add first node
@@ -175,8 +197,11 @@ class CrawlCoverage:
                     ref_score = 1.0 / degree
                     reference_dictionary[vertex] = ref_score
                     visited.add(vertex)
+            pbar.update()
 
-        plt.plot(x, y, linewidth=2, label="MFC")
+        pbar.close()
+
+        plt.plot(x, y, linewidth=2, label="mfc")
 
     @staticmethod
     def _community_removed(vertex, communities, members):

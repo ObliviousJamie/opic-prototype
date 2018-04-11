@@ -1,3 +1,6 @@
+from tqdm import tqdm
+
+
 class MFC:
 
     def __init__(self, G, start):
@@ -61,6 +64,8 @@ class MFC:
         community_dict = {community_index: set()}
         last_ref = 0
 
+        pbar = tqdm(desc="original-mfc calculating communities", unit="vertex")
+
         while not self.empty():
             current_max = self.next()
             current_ref = self.max_references.pop()
@@ -79,8 +84,10 @@ class MFC:
             community_dict[community_index].add(current_max)
 
             last_ref = current_ref
+            pbar.update()
 
         self._reset()
+        pbar.close()
         return community_dict
 
     def _reset(self):

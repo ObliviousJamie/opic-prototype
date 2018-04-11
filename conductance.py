@@ -33,7 +33,6 @@ class ConductancePlotManager:
         seed_dict = {}
 
         for seeder in self.seeders:
-            print("Processing...", seeder.name)
             seeds = seeder.seed(graph)
 
             seed_dict[seeder.name] = seeds

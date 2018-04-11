@@ -1,14 +1,16 @@
 import numpy as np
-
+from tqdm import tqdm
 from module.crawling.mfc import MFC
 from module.crawling.opic import OPIC
+from module.seeding.seed_progress import SeedProgress
 from module.seeding.seeder.threshold_seed import ThresholdSeeder
 
 
 class SeedMFCOPIC(ThresholdSeeder):
 
     def __init__(self, threshold=1.0, label=None, start=None, return_type="integer", s_filter=None, peak_filter=None):
-        super(SeedMFCOPIC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter, peak_filter=peak_filter)
+        super(SeedMFCOPIC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter,
+                                          peak_filter=peak_filter)
         self.start = start
 
         if label is None:
@@ -17,6 +19,8 @@ class SeedMFCOPIC(ThresholdSeeder):
             self.name = label
 
     def seed(self, G):
+        progress = SeedProgress(G, label=self.name)
+
         start = self.start
         if start is None:
             start = self.random_vertex(G)
@@ -41,6 +45,7 @@ class SeedMFCOPIC(ThresholdSeeder):
                 x_axis.append(max_val)
                 y_axis.append(current_cash)
             opic.visit(max_val)
+            progress.update()
 
         y_axis = np.array(y_axis)
         x_axis = np.array(x_axis)
@@ -50,5 +55,7 @@ class SeedMFCOPIC(ThresholdSeeder):
 
         if self.s_filter is not None:
             seeds = self.s_filter.filter(seeds, G)
+
+        progress.finish()
 
         return seeds

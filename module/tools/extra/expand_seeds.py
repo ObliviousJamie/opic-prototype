@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 from module.expansion.ppr import PPR
 
 
@@ -8,7 +10,7 @@ class SeedExpansion:
         ppr = PPR(tol=tol)
 
         community = {}
-        for seed in seeds:
+        for seed in tqdm(seeds, desc="Expanding seeds to communities", unit="seed"):
             seed_array = G[seed] if use_neighborhood else [seed]
             best = ppr.ppr_rank(G, seed_array)
             community[seed] = best
