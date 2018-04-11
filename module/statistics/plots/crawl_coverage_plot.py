@@ -44,8 +44,11 @@ class CrawlCoverage:
         community_explored = 0
         opic = OPIC(graph)
 
+        pbar = tqdm(total=number_nodes, desc="opic crawling", unit='vertex')
+
         opic.visit(start)
         nodes.remove(start)
+        pbar.update()
         visited += 1.0
 
         communities_incremented = CrawlCoverage._community_removed(start, opic_communities, opic_members)
@@ -54,14 +57,13 @@ class CrawlCoverage:
         x.append(community_explored)
         y.append(visited / number_nodes)
 
-        pbar = tqdm(total=number_nodes, desc="opic crawling", unit='vertex')
-
         while nodes:
             max_cash_node = opic.local_max_vertex
             opic.visit(max_cash_node)
 
             if max_cash_node in nodes:
                 nodes.remove(max_cash_node)
+                pbar.update()
 
                 communities_incremented = CrawlCoverage._community_removed(max_cash_node, opic_communities,
                                                                            opic_members)
@@ -71,7 +73,6 @@ class CrawlCoverage:
                 x.append(community_explored)
                 y.append((visited / number_nodes) * 100)
 
-            pbar.update()
 
         pbar.close()
 
@@ -114,7 +115,6 @@ class CrawlCoverage:
         pbar.close()
         plt.plot(x, y, linewidth=2, label="bfs")
 
-
     @staticmethod
     def dfs(graph, dfs_communities, dfs_members, start):
         x, y = [], []
@@ -153,7 +153,7 @@ class CrawlCoverage:
         community_explored, nodes_explored = 0, 0
         reference_dictionary = {}
 
-        pbar = tqdm(total=len(graph.nodes), desc="bfs crawling", unit='vertex')
+        pbar = tqdm(total=len(graph.nodes), desc="mfc crawling", unit='vertex')
 
         visited = set()
         # Add first node
