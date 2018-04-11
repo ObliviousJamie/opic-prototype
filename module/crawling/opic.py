@@ -1,7 +1,7 @@
 class OPIC:
     """Online page importance calculation
 
-    Keeps track of page cash and page cash history of nodes in a graph.
+    Keeps track of page cash and page cash history of nodes in a tools.
     """
 
     def __init__(self, G):

@@ -1,6 +1,6 @@
 import numpy
 
-from module.graph.tools.expand_seeds import SeedExpansion
+from module.tools.extra.expand_seeds import SeedExpansion
 
 
 class Stats:

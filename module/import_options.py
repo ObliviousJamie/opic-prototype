@@ -1,7 +1,7 @@
 import copy
 
 from module.LFR.readLFR import ReadLFR
-from module.graph.tools.samples import Samples
+from module.tools.extra.samples import Samples
 from module.imports.importData import ImportData
 
 
@@ -23,53 +23,15 @@ class Options:
                     options[argument[1]].append(data)
 
         if not options:
-            self.print_help()
+            self._print_help()
             exit()
 
         if 'h' in options:
-            self.print_help()
+            self._print_help()
             exit()
 
         self.options = options
         return options
-
-    @staticmethod
-    def print_help():
-        blank = '                 '
-        print("Options:")
-        print(f"-h{blank}Print help")
-        print(f"-s{blank}Benchmark graph size")
-        print(f"-m{blank}Benchmark graph mixing parameter")
-        print(f"-o{blank}Benchmark graph overlap percentage")
-        print(f"-c{blank}Methods to use: standard all mfcopic")
-        print(f"-d{blank}Location of real graph in edgelist format")
-        print(f"-t{blank}Location of ground truth")
-
-    @staticmethod
-    def is_lfr(opts):
-        if 's' in opts and 'm' in opts or 'o' in opts:
-            if 'd' in opts:
-                print('Cannot have LFR generated graph and supplied graph. Remove -d or -s,-m and -o.')
-                exit()
-            return True
-        elif 'd' in opts:
-            if 's' in opts or 'm' in opts or 'o' in opts:
-                print('Cannot have LFR generated graph and supplied graph. Remove -d or -s,-m and -o.')
-                exit()
-            return False
-        else:
-            print('Either graph file was not specified or lfr size, mix and overlap parameters were not specified.')
-            exit()
-
-    @staticmethod
-    def find_seeder(seeder_group):
-        print(f'Looking for {seeder_group}')
-        samples = Samples()
-        return {
-            'standard' : samples.standard(),
-            'all' : samples.all(),
-            'mfcopic' : samples.mfcopic()
-        }.get(seeder_group[0], samples.mfcopic())
 
     def generate_reader(self):
         if self.options is None:
@@ -89,7 +51,7 @@ class Options:
         if self.options is None:
             self.gather_opts()
 
-        seeders = self.find_seeder(self.options.get('c', 'mfcopic'))
+        seeders = self._find_seeder(self.options.get('c', 'mfcopic'))
 
         return seeders
 
@@ -114,6 +76,39 @@ class Options:
 
         return graph, truth_dict
 
+    @staticmethod
+    def _print_help():
+        blank = '                 '
+        print("Options:")
+        print(f"-h{blank}Print help")
+        print(f"-s{blank}Benchmark tools size")
+        print(f"-m{blank}Benchmark tools mixing parameter")
+        print(f"-o{blank}Benchmark tools overlap percentage")
+        print(f"-c{blank}Methods to use: standard all mfcopic")
+        print(f"-d{blank}Location of real tools in edgelist format")
+        print(f"-t{blank}Location of ground truth")
 
+    @staticmethod
+    def is_lfr(opts):
+        if 's' in opts and 'm' in opts or 'o' in opts:
+            if 'd' in opts:
+                print('Cannot have LFR generated tools and supplied tools. Remove -d or -s,-m and -o.')
+                exit()
+            return True
+        elif 'd' in opts:
+            if 's' in opts or 'm' in opts or 'o' in opts:
+                print('Cannot have LFR generated tools and supplied tools. Remove -d or -s,-m and -o.')
+                exit()
+            return False
+        else:
+            print('Either tools file was not specified or lfr size, mix and overlap parameters were not specified.')
+            exit()
 
-
+    @staticmethod
+    def _find_seeder(seeder_group):
+        samples = Samples()
+        return {
+            'standard': samples.standard(),
+            'all': samples.all(),
+            'mfcopic': samples.mfcopic()
+        }.get(seeder_group[0], samples.mfcopic())

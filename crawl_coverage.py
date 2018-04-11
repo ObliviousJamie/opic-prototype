@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from module.graph.tools.graph_clean import GraphClean
+from module.tools.extra.graph_clean import GraphClean
 from module.import_options import Options
 from module.statistics.crawl_coverage_plot import CrawlCoverage
 

@@ -3,7 +3,7 @@ import copy
 import matplotlib.pyplot as plt
 from random import choice
 
-from module.graph.tools.expand_seeds import SeedExpansion
+from module.tools.extra.expand_seeds import SeedExpansion
 from module.statistics.fscore import FScore
 
 
@@ -86,7 +86,7 @@ class SeedPlot:
 
     def _add_labels(self, metric):
         plt.title(f"Seeds against {metric}")
-        plt.xlabel("Percentage of graph used as seeds")
+        plt.xlabel("Percentage of tools used as seeds")
         plt.ylabel(metric)
         plt.axis((0, 100, 0, 1.0))
         # plt.legend()

@@ -1,4 +1,4 @@
-from module.graph.tools.samples import Samples
+from module.tools.extra.samples import Samples
 from module.import_options import Options
 from module.seeding.spreadhub_seed import Spreadhub
 from module.statistics.fscorecalculator import FscoreCalculator
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         graph, communities = option_import.import_real(directory, need_truth=True)
         print("Graph and community imported")
         seeders.append(Spreadhub(int(float(len(graph.nodes)) * 0.2)))
-        rows = calculator.imported_fscores(graph, communities, label='graph')
+        rows = calculator.imported_fscores(graph, communities, label='tools')
         if rows is not None:
             print("Printed rows")
 

@@ -3,7 +3,7 @@ import networkx as nx
 from module.LFR.readLFR import ReadLFR
 from module.expansion.ppr import PPR
 from module.expansion.neighborhood import NeighborExpand
-from module.graph.tools.samples import Samples
+from module.tools.extra.samples import Samples
 
 
 def lfr_to_gml(reader, save_location, seeders):

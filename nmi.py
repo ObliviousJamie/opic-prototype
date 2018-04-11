@@ -45,7 +45,7 @@ class NMIManager:
                 bestset = ppr.ppr_rank(graph, seed)
                 communities[key].append(bestset)
 
-            method = f'custom{len(graph)}_{seeder.name}'
+            method = f'custom{len(tools)}_{seeder.name}'
             writer.save(truth, communities, key, '', method)
             lfr_plot = PlotLFR((), save_loc='')
             nmi = lfr_plot.read(method, '', '', '', '')

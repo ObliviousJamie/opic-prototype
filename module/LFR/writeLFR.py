@@ -3,7 +3,7 @@ from random import choice
 
 from module.crawling.mfc import MFC
 from module.expansion.ppr import PPR
-from module.graph.tools.expand_seeds import SeedExpansion
+from module.tools.extra.expand_seeds import SeedExpansion
 
 
 class WriteLFR:
@@ -60,7 +60,7 @@ class WriteLFR:
 
             ppr = PPR()
             communities[key] = []
-            # bestsets = expander.expand(seeds=seeds, G=graph)
+            # bestsets = expander.expand(seeds=seeds, G=tools)
             # communities[key] = bestsets
             for seed in seeds:
                 seed = graph[seed]

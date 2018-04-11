@@ -1,5 +1,5 @@
 from module.LFR.readLFR import ReadLFR
-from module.graph.tools.samples import Samples
+from module.tools.extra.samples import Samples
 from module.statistics.seed_plot import SeedPlot
 
 if __name__ == '__main__':

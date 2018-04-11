@@ -1,7 +1,7 @@
 import networkx as nx
 
 
-class GraphClean():
+class GraphClean:
 
     @staticmethod
     def prune_unconnected_components(graph):

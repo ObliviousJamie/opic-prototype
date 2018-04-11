@@ -83,7 +83,7 @@ class ConductancePlotManager:
 
             seed_dict[seeder.name] = seeds
 
-        print("Plotting graph...")
+        print("Plotting tools...")
         self.plot_coverages(graph, seed_dict)
         if save_name != '':
             plt.savefig(save_name)
