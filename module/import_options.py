@@ -7,10 +7,11 @@ from module.imports.import_data import ImportData
 
 class Options:
 
-    def __init__(self, arguments):
+    def __init__(self, arguments, parameters="smocdtl"):
         arguments = copy.copy(arguments)
         self.argv = arguments
         self.options = None
+        self.parameters = parameters
 
     def gather_opts(self):
         options = {}
@@ -23,11 +24,11 @@ class Options:
                     options[argument[1]].append(data)
 
         if not options:
-            self._print_help()
+            self._print_help(parameters= self.parameters)
             exit()
 
         if 'h' in options:
-            self._print_help()
+            self._print_help(parameters= self.parameters)
             exit()
 
         self.options = options
@@ -76,32 +77,49 @@ class Options:
 
         return graph, truth_dict
 
+    def find_seed_list(self):
+        if 'l' in self.options:
+            seed_list = self.options['l'][0]
+            return seed_list
+        return None
+
     @staticmethod
-    def _print_help():
+    def _print_help(parameters):
         blank = '                 '
+
         print("Options:")
         print(f"-h{blank}Print help")
-        print(f"-s{blank}Benchmark tools size")
-        print(f"-m{blank}Benchmark tools mixing parameter")
-        print(f"-o{blank}Benchmark tools overlap percentage")
-        print(f"-c{blank}Methods to use: standard all mfcopic")
-        print(f"-d{blank}Location of real tools in edgelist format")
-        print(f"-t{blank}Location of ground truth")
+
+        switcher = {
+            "s": f"-s{blank}Benchmark network size",
+            "m": f"-m{blank}Benchmark network mixing parameter",
+            "o": f"-o{blank}Benchmark network overlap percentage",
+            "c": f"-c{blank}Methods to use: standard all mfcopic",
+            "d": f"-d{blank}Location of real graphs in edgelist format",
+            "t": f"-t{blank}Location of ground truth",
+            "l": f"-l{blank}Add text file containing seed vertices",
+        }
+
+        for letter in parameters:
+            instruction = switcher.get(letter, None)
+            if instruction is not None:
+                print(instruction)
+
 
     @staticmethod
     def is_lfr(opts):
         if 's' in opts and 'm' in opts or 'o' in opts:
             if 'd' in opts:
-                print('Cannot have lfr generated tools and supplied tools. Remove -d or -s,-m and -o.')
+                print('Cannot have lfr generated network and a supplied network. Remove -d or -s,-m and -o.')
                 exit()
             return True
         elif 'd' in opts:
             if 's' in opts or 'm' in opts or 'o' in opts:
-                print('Cannot have lfr generated tools and supplied tools. Remove -d or -s,-m and -o.')
+                print('Cannot have lfr generated network and supplied network. Remove -d or -s,-m and -o.')
                 exit()
             return False
         else:
-            print('Either tools file was not specified or lfr size, mix and overlap parameters were not specified.')
+            print('Either network file was not specified or lfr size, mix and overlap parameters were not specified.')
             exit()
 
     @staticmethod
