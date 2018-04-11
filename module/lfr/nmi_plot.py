@@ -8,7 +8,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 
-class PlotLFR:
+class PlotNMI:
 
     def __init__(self, method_thres_pair, save_loc=''):
         self.method_tuple_arr = method_thres_pair
@@ -27,9 +27,9 @@ class PlotLFR:
                 plt.ylim([0, 1])
 
                 for method, threshold in self.method_tuple_arr:
-                    x, y = self.read_NMIs(method, threshold, size, mix, overlaps)
+                    x, y = self.read_nmis(method, threshold, size, mix, overlaps)
 
-                    avg_dict.setdefault(method,[])
+                    avg_dict.setdefault(method, [])
                     avg = sum(y) / len(y)
                     avg_dict[method].append(avg)
 
@@ -47,19 +47,16 @@ class PlotLFR:
             overall_avg = sum(v) / len(v)
             overall.append((overall_avg, k))
 
-        jsizes = "-".join(map(str,sizes))
+        jsizes = "-".join(map(str, sizes))
         jmixes = "-".join(map(str, mixes))
-        jover = "-".join(map(str,overlaps))
-        file = open(f"{jsizes}_{jmixes}_{jover}.txt","w")
+        jover = "-".join(map(str, overlaps))
+        file = open(f"{jsizes}_{jmixes}_{jover}.txt", "w")
         for avg, name in sorted(overall):
             line = f"{name} with average NMI of {avg}"
             print(line, file=file)
-            #file.write(line)
         file.close()
 
-
-
-    def read_NMIs(self, method, threshold, size, mix, overlaps):
+    def read_nmis(self, method, threshold, size, mix, overlaps):
         score_arr = []
         overlap_arr = []
         for overlap in overlaps:
@@ -84,14 +81,12 @@ class PlotLFR:
             if os.path.getsize(result_file) == 0:
                 print(f"WARNING: No discovered communities in {result_file}")
             else:
-                #print("FOUND FILE")
-
                 out = subprocess.run(arg_string, check=True, shell=True, stdout=subprocess.PIPE)
 
                 decoded_array = out.stdout \
-                .decode("utf-8") \
-                .replace('\t', '\n') \
-                .split('\n')
+                    .decode("utf-8") \
+                    .replace('\t', '\n') \
+                    .split('\n')
 
                 nmi = decoded_array[4]
                 print()

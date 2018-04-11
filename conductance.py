@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from module.LFR.helper import LFRHelper
+from module.lfr.helper import LFRHelper
 from module.import_options import Options
 from module.seeding.seeder.spreadhub import Spreadhub
 from module.statistics.plots.coverage_plot import ConductancePlot
@@ -43,7 +43,7 @@ class ConductancePlotManager:
             plt.savefig(save_name)
         plt.close()
 
-    def plot_with_lfr(self, reader, label='LFR'):
+    def plot_with_lfr(self, reader, label='lfr'):
         lfr_dict = reader.read()
         for key, value in lfr_dict.items():
             size, mix, overlap = LFRHelper.extract_key(key)

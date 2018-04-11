@@ -6,7 +6,7 @@ from module.expansion.ppr import PPR
 from module.tools.extra.expand_seeds import SeedExpansion
 
 
-class WriteLFR:
+class WriteCommunities:
 
     def __init__(self, write_truth=True):
         self.dir = os.path.dirname(__file__)
@@ -49,7 +49,6 @@ class WriteLFR:
         lfr_graphs = reader.read()
         communities = {}
         memberships = []
-        expander = SeedExpansion()
 
         for key, value in lfr_graphs.items():
             graph, membership = value
@@ -60,12 +59,10 @@ class WriteLFR:
 
             ppr = PPR()
             communities[key] = []
-            # bestsets = expander.expand(seeds=seeds, G=tools)
-            # communities[key] = bestsets
             for seed in seeds:
                 seed = graph[seed]
-                bestset = ppr.ppr_rank(graph, seed)
-                communities[key].append(bestset)
+                best_set = ppr.ppr_rank(graph, seed)
+                communities[key].append(best_set)
 
             self.save(truth=membership, result=communities, key=key, threshold=seeder.threshold, method=seeder.name)
 
@@ -84,7 +81,6 @@ class WriteLFR:
 
             communities[key] = []
 
-            print("Calculating MFC...")
             mfc_communities = mfc.communities()
             for index, items in mfc_communities.items():
                 communities[key].append(items)

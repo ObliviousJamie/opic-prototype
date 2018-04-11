@@ -1,6 +1,6 @@
-from module.LFR.plotLFR import PlotLFR
-from module.LFR.readLFR import ReadLFR
-from module.LFR.writeLFR import WriteLFR
+from module.lfr.nmi_plot import PlotNMI
+from module.lfr.lfr_reader import LFRReader
+from module.lfr.community_writer import WriteCommunities
 from module.expansion.ppr import PPR
 from module.import_options import Options
 from module.seeding.seeder.spreadhub import Spreadhub
@@ -12,7 +12,7 @@ class NMIManager:
         self.cd_seeders = cd_seeders
 
     def plot(self, reader, location=''):
-        lfr = WriteLFR(reader)
+        lfr = WriteCommunities(reader)
 
         seeders.append(Spreadhub(int(float(reader.network_sizes[0]) * 0.2)))
 
@@ -26,12 +26,12 @@ class NMIManager:
             plot_tuples.append(method_tup)
         plot_tuples.append(("mfc-original", 0))
 
-        lfr_plot = PlotLFR(plot_tuples, save_loc=location)
+        lfr_plot = PlotNMI(plot_tuples, save_loc=location)
         lfr_plot.plot(reader.network_sizes, reader.mixing_parameters, reader.overlapping_fractions)
 
     def read_real(self, network, truth):
-        reader = ReadLFR([1000], [0.1], [0.1])
-        writer = WriteLFR(reader)
+        reader = LFRReader([1000], [0.1], [0.1])
+        writer = WriteCommunities(reader)
         communities = {}
 
         for seeder in self.cd_seeders:
@@ -49,7 +49,7 @@ class NMIManager:
 
             method = f'custom{len(network)}_{seeder.name}'
             writer.save(truth, communities, key, '', method)
-            lfr_plot = PlotLFR((), save_loc='')
+            lfr_plot = PlotNMI((), save_loc='')
             nmi = lfr_plot.read(method, '', '', '', '')
             print(f"{seeder.name}   NMI: {nmi}")
 

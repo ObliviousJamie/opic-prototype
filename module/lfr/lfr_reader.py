@@ -3,7 +3,7 @@ import os
 import networkx as nx
 
 
-class ReadLFR:
+class LFRReader:
 
     def __init__(self, network_sizes, mixing_parameters, overlapping_fractions=''):
         self.network_sizes = network_sizes

@@ -1,6 +1,6 @@
 import networkx as nx
 
-from module.LFR.helper import LFRHelper
+from module.lfr.helper import LFRHelper
 from module.expansion.neighborhood import NeighborExpand
 from module.expansion.ppr import PPR
 from module.import_options import Options

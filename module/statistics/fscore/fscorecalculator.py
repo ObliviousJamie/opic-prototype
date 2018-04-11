@@ -1,4 +1,4 @@
-from module.LFR.helper import LFRHelper
+from module.lfr.helper import LFRHelper
 from module.crawling.mfc import MFC
 from module.statistics.fscore.fscore import FScore
 from module.tools.extra.expand_seeds import SeedExpansion

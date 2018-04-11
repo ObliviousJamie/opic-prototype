@@ -1,0 +1,4 @@
+NMI<Max>:	0.349251
+Other measures:
+  lfkNMI:	0.617535
+  NMI<Sum>:	0.602522

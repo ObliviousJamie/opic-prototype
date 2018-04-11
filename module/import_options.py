@@ -1,6 +1,6 @@
 import copy
 
-from module.LFR.readLFR import ReadLFR
+from module.lfr.lfr_reader import LFRReader
 from module.tools.extra.samples import Samples
 from module.imports.import_data import ImportData
 
@@ -40,9 +40,9 @@ class Options:
         if Options.is_lfr(self.options):
             sizes = self.options['s']
             mixes = self.options['m']
-            reader = ReadLFR(sizes, mixes)
+            reader = LFRReader(sizes, mixes)
             if 'o' in self.options:
-                reader = ReadLFR(sizes, mixes, overlapping_fractions=self.options['o'])
+                reader = LFRReader(sizes, mixes, overlapping_fractions=self.options['o'])
             return reader
         else:
             return None
@@ -92,12 +92,12 @@ class Options:
     def is_lfr(opts):
         if 's' in opts and 'm' in opts or 'o' in opts:
             if 'd' in opts:
-                print('Cannot have LFR generated tools and supplied tools. Remove -d or -s,-m and -o.')
+                print('Cannot have lfr generated tools and supplied tools. Remove -d or -s,-m and -o.')
                 exit()
             return True
         elif 'd' in opts:
             if 's' in opts or 'm' in opts or 'o' in opts:
-                print('Cannot have LFR generated tools and supplied tools. Remove -d or -s,-m and -o.')
+                print('Cannot have lfr generated tools and supplied tools. Remove -d or -s,-m and -o.')
                 exit()
             return False
         else:
