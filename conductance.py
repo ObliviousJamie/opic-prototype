@@ -64,7 +64,7 @@ if __name__ == '__main__':
     import os
     import datetime
 
-    option_import = Options(argv)
+    option_import = Options(argv, parameters="smocd")
     seeders = option_import.select_seeders()
 
     directory = os.getcwd()

@@ -41,7 +41,6 @@ class CrawlCoverageManager:
         plt.savefig(f"{self.save_base}_{name}.png")
         plt.close()
 
-
     @staticmethod
     def flip_list_dict(dictionary):
         new_dict = {}
@@ -51,12 +50,13 @@ class CrawlCoverageManager:
                 new_dict[item].append(key)
         return new_dict
 
+
 if __name__ == '__main__':
     from sys import argv
     import os
     import datetime
 
-    option_import = Options(argv)
+    option_import = Options(argv, parameters="smocdt")
     seeders = option_import.select_seeders()
 
     directory = os.getcwd()
@@ -71,4 +71,3 @@ if __name__ == '__main__':
         graph, communities = option_import.import_real(directory, need_truth=True)
         print("Graph and community imported")
         crawl_manager.coverage_real(graph, communities)
-

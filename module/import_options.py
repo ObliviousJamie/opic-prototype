@@ -24,11 +24,11 @@ class Options:
                     options[argument[1]].append(data)
 
         if not options:
-            self._print_help(parameters= self.parameters)
+            self._print_help(parameters=self.parameters)
             exit()
 
         if 'h' in options:
-            self._print_help(parameters= self.parameters)
+            self._print_help(parameters=self.parameters)
             exit()
 
         self.options = options
@@ -52,7 +52,7 @@ class Options:
         if self.options is None:
             self.gather_opts()
 
-        seeders = self._find_seeder(self.options.get('c', 'mfcopic'))
+        seeders = self._find_seeder(self.options.get('c', 'all'))
 
         return seeders
 
@@ -94,7 +94,7 @@ class Options:
             "s": f"-s{blank}Benchmark network size",
             "m": f"-m{blank}Benchmark network mixing parameter",
             "o": f"-o{blank}Benchmark network overlap percentage",
-            "c": f"-c{blank}Methods to use: standard all mfcopic",
+            "c": f"-c{blank}Methods to use: all mfc mfcopic opic quick alternative",
             "d": f"-d{blank}Location of real graphs in edgelist format",
             "t": f"-t{blank}Location of ground truth",
             "l": f"-l{blank}Add text file containing seed vertices",
@@ -104,7 +104,6 @@ class Options:
             instruction = switcher.get(letter, None)
             if instruction is not None:
                 print(instruction)
-
 
     @staticmethod
     def is_lfr(opts):
@@ -126,7 +125,10 @@ class Options:
     def _find_seeder(seeder_group):
         samples = Samples()
         return {
-            'standard': samples.standard(),
-            'all': samples.all(),
-            'mfcopic': samples.mfcopic()
+            'quick': samples.quick(),
+            'alternative': samples.alternative(),
+            'opic': samples.opic(),
+            'mfc': samples.mfc(),
+            'mfcopic': samples.mfcopic(),
+            'all': samples.all()
         }.get(seeder_group[0], samples.mfcopic())
