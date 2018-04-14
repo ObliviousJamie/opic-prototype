@@ -56,8 +56,7 @@ if __name__ == '__main__':
     import os
     import datetime
 
-    option_import = Options(argv, parameters="smocdt")
-    seeders = option_import.select_seeders()
+    option_import = Options(argv, parameters="smodt")
 
     directory = os.getcwd()
     date = datetime.datetime.now().strftime("%y-%m-%H%S")
