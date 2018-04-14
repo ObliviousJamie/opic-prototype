@@ -1,10 +1,10 @@
 from tqdm import tqdm
 
-from module.lfr.nmi_plot import PlotNMI
-from module.lfr.lfr_reader import LFRReader
-from module.lfr.community_writer import WriteCommunities
 from module.expansion.ppr import PPR
 from module.import_options import Options
+from module.lfr.community_writer import WriteCommunities
+from module.lfr.lfr_reader import LFRReader
+from module.lfr.nmi_plot import PlotNMI
 from module.seeding.seeder.spreadhub import Spreadhub
 
 

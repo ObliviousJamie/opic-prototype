@@ -1,7 +1,5 @@
 import numpy
 
-from module.tools.extra.expand_seeds import SeedExpansion
-
 
 class Accuracy:
 
@@ -54,4 +52,3 @@ class Accuracy:
         print("Accuracy %s" % acc)
         print()
         return acc
-

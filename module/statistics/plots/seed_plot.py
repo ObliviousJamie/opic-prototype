@@ -1,7 +1,7 @@
 import copy
+from random import choice
 
 import matplotlib.pyplot as plt
-from random import choice
 
 from module.statistics.fscore.fscore import FScore
 from module.tools.extra.expand_seeds import SeedExpansion

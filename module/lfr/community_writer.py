@@ -5,7 +5,6 @@ from tqdm import tqdm
 
 from module.crawling.mfc import MFC
 from module.expansion.ppr import PPR
-from module.tools.extra.expand_seeds import SeedExpansion
 
 
 class WriteCommunities:

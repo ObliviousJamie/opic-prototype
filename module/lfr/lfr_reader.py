@@ -63,4 +63,3 @@ class LFRReader:
                     members[vertex].append(cluster_number)
 
         return (G, members)
-

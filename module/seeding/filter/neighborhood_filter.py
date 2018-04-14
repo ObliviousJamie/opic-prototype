@@ -15,7 +15,3 @@ class NeighborhoodFilter():
                     visited.add(u)
 
         return new_seeds
-
-
-
-

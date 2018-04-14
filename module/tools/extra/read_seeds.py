@@ -1,4 +1,3 @@
-
 class SeedReader:
 
     def __init__(self, location):

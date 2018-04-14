@@ -1,11 +1,11 @@
 from random import choice
 
+import matplotlib.pyplot as plt
 import networkx as nx
 from tqdm import tqdm
 
 from module.crawling.mfc import MFC
 from module.expansion.ppr import PPR
-import matplotlib.pyplot as plt
 
 
 class ConductancePlot:
@@ -45,7 +45,7 @@ class ConductancePlot:
                     x.append(coverage)
                     y.append(conductance)
 
-        plt.plot(x, y, label=label ,linewidth=2)
+        plt.plot(x, y, label=label, linewidth=2)
 
     def plot_coverage_mfc(self):
         start = choice(list(self.graph.nodes))
@@ -68,8 +68,7 @@ class ConductancePlot:
             for _ in community:
                 conductances.append(conductance)
                 total_visited += 1
-                coverage = ( total_visited / len(self.graph.nodes)) * 100
+                coverage = (total_visited / len(self.graph.nodes)) * 100
                 coverages.append(coverage)
 
         plt.plot(coverages, conductances, label="mfc_original", linewidth=2)
-

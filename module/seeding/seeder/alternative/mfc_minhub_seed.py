@@ -35,4 +35,3 @@ class SeedMinhubMFC(HubSeeder):
         seeds = self.filter_candidates(candidate_backlog, heap, graph)
 
         return seeds
-

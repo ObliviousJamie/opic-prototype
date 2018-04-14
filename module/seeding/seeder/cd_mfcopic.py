@@ -1,5 +1,5 @@
 import numpy as np
-from tqdm import tqdm
+
 from module.crawling.mfc import MFC
 from module.crawling.opic import OPIC
 from module.seeding.seed_progress import SeedProgress

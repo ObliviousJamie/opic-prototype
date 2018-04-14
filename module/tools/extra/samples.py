@@ -1,5 +1,4 @@
 from module.seeding.filter.neighborhood_filter import NeighborhoodFilter
-from module.seeding.filter.ppr_filter import PPRFilter
 from module.seeding.peak.basic_peak_finder import PeakFinder
 from module.seeding.seeder.alternative.mfc_minhub_seed import SeedMinhubMFC
 from module.seeding.seeder.alternative.opichub_seed import SeedOPICHub
@@ -41,7 +40,6 @@ class Samples:
         minmfc = SeedMFC(1.4, s_filter=n_filter, return_type='string')
         opic = SeedOPIC(1.9, s_filter=n_filter, return_type='string')
         return [mfcopic, minmfc, opic]
-
 
     @staticmethod
     def alternative():

@@ -1,10 +1,10 @@
 import networkx as nx
 from tqdm import tqdm
 
-from module.lfr.helper import LFRHelper
 from module.expansion.neighborhood import NeighborExpand
 from module.expansion.ppr import PPR
 from module.import_options import Options
+from module.lfr.helper import LFRHelper
 
 
 class GMLWriter:
@@ -67,7 +67,8 @@ class GMLWriter:
         community_count = 0
         size_tuples = []
 
-        for center_seed, neighbor_seeds in tqdm(expanded_seeds.items(), desc="Expanding seeds to form communities", unit="seed", total=len(seeds)):
+        for center_seed, neighbor_seeds in tqdm(expanded_seeds.items(), desc="Expanding seeds to form communities",
+                                                unit="seed", total=len(seeds)):
             detected = ppr.ppr_rank(graph, neighbor_seeds)
             graph.node[center_seed]['cseed'] = str(community_count)
             for seed in neighbor_seeds:
@@ -109,6 +110,3 @@ if __name__ == '__main__':
         graph, communities = option_import.import_real(directory, need_truth=False)
         print("Graph and community imported")
         gml_writer.graph_to_gml(graph, communities)
-
-
-

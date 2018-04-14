@@ -28,4 +28,3 @@ if __name__ == '__main__':
         rows = calculator.imported_fscores(graph, communities, label='graph')
         for name, score in rows:
             print(f"Seeder: {name}   F1: {score[0]}     F2: {score[1]}")
-

@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
-from module.tools.extra.graph_clean import GraphClean
+
 from module.import_options import Options
 from module.statistics.plots.crawl_coverage_plot import CrawlCoverage
+from module.tools.extra.graph_clean import GraphClean
 
 
 class CrawlCoverageManager:

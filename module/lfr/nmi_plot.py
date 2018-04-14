@@ -1,8 +1,6 @@
-import time
-
 import os
-
 import subprocess
+import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt

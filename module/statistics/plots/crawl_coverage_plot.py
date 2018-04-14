@@ -1,10 +1,8 @@
-import matplotlib.pyplot as plt
+import copy
 from queue import Queue
 from random import choice
-import copy
 
-import time
-
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from module.crawling.opic import OPIC
@@ -72,7 +70,6 @@ class CrawlCoverage:
                 visited += 1
                 x.append(community_explored)
                 y.append((visited / number_nodes) * 100)
-
 
         pbar.close()
 

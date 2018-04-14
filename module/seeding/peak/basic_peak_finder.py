@@ -14,4 +14,3 @@ class PeakFinder:
             return True
 
         return False
-

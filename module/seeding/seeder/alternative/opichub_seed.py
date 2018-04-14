@@ -36,4 +36,3 @@ class SeedOPICHub(HubSeeder):
         seeds = self.filter_candidates(candidates, seeds, G)
 
         return seeds
-

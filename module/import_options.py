@@ -1,8 +1,8 @@
 import copy
 
+from module.imports.import_data import ImportData
 from module.lfr.lfr_reader import LFRReader
 from module.tools.extra.samples import Samples
-from module.imports.import_data import ImportData
 
 
 class Options:

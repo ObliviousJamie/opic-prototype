@@ -22,5 +22,3 @@ class PPRFilter(NeighborhoodFilter):
                 for v in best_set:
                     visited.add(v)
         return new_seeds
-
-

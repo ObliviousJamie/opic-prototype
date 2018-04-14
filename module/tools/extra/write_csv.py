@@ -16,6 +16,3 @@ class WriteCSV:
                 for score in fscores:
                     row.append(str(score[beta - 1]))
                 writer.writerow(row)
-
-
-

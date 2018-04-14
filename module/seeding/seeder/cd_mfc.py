@@ -8,7 +8,8 @@ from module.seeding.seeder.threshold_seed import ThresholdSeeder
 class SeedMFC(ThresholdSeeder):
 
     def __init__(self, threshold=1.0, label=None, start=None, return_type="integer", s_filter=None, peak_filter=None):
-        super(SeedMFC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter, peak_filter=peak_filter)
+        super(SeedMFC, self).__init__(threshold=threshold, return_type=return_type, s_filter=s_filter,
+                                      peak_filter=peak_filter)
         self.start = start
 
         if label is None:

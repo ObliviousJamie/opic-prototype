@@ -1,4 +1,5 @@
 import os
+
 import networkx as nx
 
 from module.tools.extra.graph_clean import GraphClean
@@ -19,7 +20,7 @@ class ImportData:
         for line in data:
             line = line.decode('utf-8').strip().split()
             for vertex in line:
-                communities.setdefault(community_count,[]).append(vertex)
+                communities.setdefault(community_count, []).append(vertex)
             community_count += 1
         return communities
 
