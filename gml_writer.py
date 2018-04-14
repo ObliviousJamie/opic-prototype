@@ -57,7 +57,7 @@ class GMLWriter:
     @staticmethod
     def find_communities(seeder, graph):
         ppr = PPR()
-        communities = {}
+        a_communities = {}
 
         seeds = seeder.seed(graph)
 
@@ -82,11 +82,11 @@ class GMLWriter:
         size_tuples = sorted(size_tuples)
         for _, detected in size_tuples:
             for v in detected:
-                communities.setdefault(v, [])
-                communities[v].append(str(community_count))
-        community_count += 1
+                a_communities.setdefault(v, set())
+                a_communities[v].add(str(community_count))
+            community_count += 1
 
-        return communities
+        return a_communities
 
 
 if __name__ == '__main__':
