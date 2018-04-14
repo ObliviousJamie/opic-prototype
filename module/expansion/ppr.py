@@ -27,14 +27,14 @@ class PPR:
         return self._min_cut(graph, best_set, sv)
 
     def _sorted_set(self, graph, seed):
-        x = {}  # Store x, r as dictionaries
-        r = {}  # initialize residual
-        Q = collections.deque()  # initialize queue
+        x = {}
+        r = {}
+        Q = collections.deque()
         for s in seed:
             r[s] = 1.0 / len(seed)
             Q.append(s)
         while len(Q) > 0:
-            v = Q.popleft()  # v has r[v] > tol*deg(v)
+            v = Q.popleft()
 
             if v not in x:
                 x[v] = 0.
@@ -43,12 +43,12 @@ class PPR:
 
             mass = self.alpha * r[v] / (2 * len(graph[v]))
 
-            for u in graph[v]:  # for neighbors of u
+            for u in graph[v]:
                 if u not in r:
                     r[u] = 0.
 
                 if r[u] < len(graph[u]) * self.tol <= r[u] + mass:
-                    Q.append(u)  # add u to queue if large
+                    Q.append(u)
 
                 r[u] += mass
 
@@ -56,11 +56,11 @@ class PPR:
             if r[v] >= len(graph[v]) * self.tol:
                 Q.append(v)
 
-        # Find cluster, first normalize by degree
+        # Normalise by degree and find community
         for v in x:
             x[v] = x[v] / len(graph[v])
 
-        # now sort x's keys by value, decreasing
+        # sort by keys
         sv = sorted(x.items(), key=lambda x: x[1], reverse=True)
 
         return sv
@@ -75,8 +75,8 @@ class PPR:
         best_condition = 1.
 
         for p in sorted_set:
-            s = p[0]  # get the vertex
-            volume_set += len(graph[s])  # add degree to volume
+            s = p[0]
+            volume_set += len(graph[s])
             for v in graph[s]:
 
                 if v in S:
@@ -89,6 +89,6 @@ class PPR:
 
             if cut_set / min(volume_set, graph_volume - volume_set) < best_condition:
                 best_condition = cut_set / min(volume_set, graph_volume - volume_set)
-                best_set = set(S)  # make a copy
+                best_set = set(S)
 
         return [best_set, best_condition]

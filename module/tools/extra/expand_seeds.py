@@ -11,7 +11,14 @@ class SeedExpansion:
 
         community = {}
         for seed in tqdm(seeds, desc="Expanding seeds to communities", unit="seed"):
-            seed_array = G[seed] if use_neighborhood else [seed]
+
+            if use_neighborhood:
+                seed_array = set(G[seed])
+            else:
+                seed_array = set()
+
+            seed_array.add(seed)
+
             best = ppr.ppr_rank(G, seed_array)
             community[seed] = best
 

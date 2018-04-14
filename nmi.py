@@ -23,7 +23,6 @@ class NMIManager:
         lfr.calculate_mfc(reader)
 
         plot_tuples = []
-        print("Huh?")
         for seeder in tqdm(seeders):
             method_tup = (seeder.name, seeder.threshold)
             plot_tuples.append(method_tup)
@@ -46,7 +45,8 @@ class NMIManager:
             seeds = seeder.seed(network)
 
             for seed in seeds:
-                seed = network[seed]
+                seeds = set(network[seed])
+                seeds.add(seed)
                 bestset = ppr.ppr_rank(network, seed)
                 communities[key].append(bestset)
 

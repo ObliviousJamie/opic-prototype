@@ -3,6 +3,7 @@ from module.lfr.helper import LFRHelper
 from module.import_options import Options
 from module.seeding.seeder.spreadhub import Spreadhub
 from module.statistics.plots.coverage_plot import ConductancePlot
+from module.tools.extra.graph_clean import GraphClean
 
 
 class ConductancePlotManager:

@@ -59,10 +59,10 @@ class WriteCommunities:
 
             ppr = PPR()
             communities[key] = []
-            print()
             for seed in tqdm(seeds, desc=f"{seeder.name} expanding seeds to communities", unit="seed"):
-                seed = graph[seed]
-                best_set = ppr.ppr_rank(graph, seed)
+                seeds = set(graph[seed])
+                seeds.add(seed)
+                best_set = ppr.ppr_rank(graph, seeds)
                 communities[key].append(best_set)
 
             self.save(truth=membership, result=communities, key=key, threshold=seeder.threshold, method=seeder.name)

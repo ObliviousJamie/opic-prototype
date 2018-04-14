@@ -1,6 +1,8 @@
 import os
 import networkx as nx
 
+from module.tools.extra.graph_clean import GraphClean
+
 
 class ImportData:
 
@@ -22,9 +24,18 @@ class ImportData:
         return communities
 
     def text_graph(self, file_location):
-        print(file_location)
         location = os.path.join(self.dir, file_location)
+        end = file_location.split(".")[-1]
+
         fh = open(location, 'rb')
-        graph = nx.read_edgelist(fh)
+
+        if end == "net":
+            graph = nx.read_pajek(fh)
+        else:
+            graph = nx.read_edgelist(fh)
+
         fh.close()
+
+        cleaner = GraphClean()
+        graph = cleaner.prune_unconnected_components(graph)
         return graph

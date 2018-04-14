@@ -17,7 +17,14 @@ class ConductancePlot:
         ppr = PPR(tol=tol)
         community = []
         for seed in tqdm(seeds, desc="Expanding seeds to communities", unit="seed"):
-            seed_array = self.graph[seed] if use_neighborhood else [seed]
+
+            if use_neighborhood:
+                seed_array = set(self.graph[seed])
+            else:
+                seed_array = set()
+
+            seed_array.add(seed)
+
             best = ppr.ppr_conductance(self.graph, seed_array)
             community.append((best[1], best[0]))
         return community

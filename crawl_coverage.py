@@ -33,7 +33,7 @@ class CrawlCoverageManager:
     def coverage_real(self, graph, communities):
         name = "custom name"
         cleaner = GraphClean()
-        cleaner.prune_unconnected_components(graph)
+        graph = cleaner.prune_unconnected_components(graph)
         flip_community = self.flip_list_dict(communities)
         self.crawl_coverage.coverage_plot(graph, communities, flip_community)
         plt.legend()

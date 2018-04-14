@@ -67,7 +67,6 @@ class GMLWriter:
         community_count = 0
         size_tuples = []
 
-        print()
         for center_seed, neighbor_seeds in tqdm(expanded_seeds.items(), desc="Expanding seeds to form communities", unit="seed", total=len(seeds)):
             detected = ppr.ppr_rank(graph, neighbor_seeds)
             graph.node[center_seed]['cseed'] = str(community_count)
@@ -80,7 +79,6 @@ class GMLWriter:
 
         community_count = 0
         size_tuples = sorted(size_tuples)
-        print(size_tuples)
         for _, detected in size_tuples:
             for v in detected:
                 communities.setdefault(v, [])
@@ -108,10 +106,9 @@ if __name__ == '__main__':
     if reader is not None:
         gml_writer.lfr_to_gml(reader)
     else:
-        graph, communities = option_import.import_real(directory, need_truth=True)
+        graph, communities = option_import.import_real(directory, need_truth=False)
         print("Graph and community imported")
         gml_writer.graph_to_gml(graph, communities)
 
-#fb = nx.read_pajek("/home/jmoreland/Downloads/graphs/fb.net")
 
 
