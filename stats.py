@@ -8,8 +8,8 @@ if __name__ == '__main__':
     import datetime
 
     option_import = Options(argv)
+
     seeders = option_import.select_seeders()
-    size = len(seeders)
 
     directory = os.getcwd()
     date = datetime.datetime.now().strftime("%y-%m-%H%S")
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         graph, communities = option_import.import_real(directory, need_truth=True)
         print("Graph and community imported")
         seeders.append(Spreadhub(int(float(len(graph.nodes)) * 0.2)))
-        rows = calculator.imported_fscores(graph, communities, label='tools')
+        rows = calculator.imported_fscores(graph, communities, label='graph')
         for name, score in rows:
             print(f"Seeder: {name}   F1: {score[0]}     F2: {score[1]}")
 
