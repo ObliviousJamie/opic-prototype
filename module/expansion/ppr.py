@@ -87,8 +87,11 @@ class PPR:
 
             S.add(s)
 
-            if cut_set / min(volume_set, graph_volume - volume_set) < best_condition:
-                best_condition = cut_set / min(volume_set, graph_volume - volume_set)
+            min_cut = min(volume_set, graph_volume - volume_set)
+            if min_cut == 0.0:
+                min_cut = 1.0
+            if cut_set / min_cut < best_condition:
+                best_condition = cut_set / min_cut
                 best_set = set(S)
 
         return [best_set, best_condition]
